@@ -93,7 +93,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.github.exampleuser:exampleplugin:VERSION")
+    compileOnly("io.github.exampleuser:AlathraHorseCombat:VERSION")
 }
 ```
 </details>
@@ -113,7 +113,7 @@ dependencies {
     <dependencies>
         <dependency>
             <groupId>io.github.exampleuser</groupId>
-            <artifactId>exampleplugin</artifactId>
+            <artifactId>AlathraHorseCombat</artifactId>
             <version>VERSION</version>
             <scope>provided</scope>
         </dependency>

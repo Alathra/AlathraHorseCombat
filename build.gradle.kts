@@ -42,6 +42,11 @@ repositories {
             includeGroup("com.github.MilkBowl") // VaultAPI
         }
     }
+    maven("https://repo.glaremasters.me/repository/towny/") {
+        content {
+            includeGroup("com.palmergames.bukkit.towny") // Towny
+        }
+    }
 }
 
 dependencies {
@@ -74,6 +79,9 @@ dependencies {
     compileOnly(libs.packetevents)
     compileOnly(libs.placeholderapi) {
         exclude("me.clip.placeholderapi.libs", "kyori")
+    }
+    compileOnly(libs.towny) {
+        exclude("com.palmergames.adventure")
     }
 
     // Database dependencies - Core
