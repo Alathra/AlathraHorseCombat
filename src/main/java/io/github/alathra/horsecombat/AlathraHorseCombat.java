@@ -2,6 +2,7 @@ package io.github.alathra.horsecombat;
 
 import io.github.alathra.horsecombat.command.CommandHandler;
 import io.github.alathra.horsecombat.config.ConfigHandler;
+import io.github.alathra.horsecombat.config.Settings;
 import io.github.alathra.horsecombat.database.handler.DatabaseHandler;
 import io.github.alathra.horsecombat.database.handler.DatabaseHandlerBuilder;
 import io.github.alathra.horsecombat.hook.HookManager;
@@ -35,6 +36,9 @@ public class AlathraHorseCombat extends JavaPlugin {
     private UpdateHandler updateHandler;
     private SchedulerHandler schedulerHandler;
 
+    // Debug flag for more verbose logging
+    private boolean debugMode = false;
+
     // Handlers list (defines order of load/enable/disable)
     private List<? extends Reloadable> handlers;
 
@@ -50,7 +54,6 @@ public class AlathraHorseCombat extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-
 
         configHandler = new ConfigHandler(this);
         translationHandler = new TranslationHandler(configHandler);
@@ -78,6 +81,9 @@ public class AlathraHorseCombat extends JavaPlugin {
         DB.init(databaseHandler);
         for (Reloadable handler : handlers)
             handler.onLoad(instance);
+
+        // initialize Settings
+        Settings.init(this);
     }
 
     @Override
@@ -106,15 +112,20 @@ public class AlathraHorseCombat extends JavaPlugin {
         onEnable();
     }
 
-    /**
-     * Gets config handler.
-     *
-     * @return the config handler
-     */
-    @NotNull
-    public ConfigHandler getConfigHandler() {
-        return configHandler;
+    // Method to check debug status
+    public boolean isDebugEnabled(){
+        return debugMode;
     }
+
+    // Toggle debug mode
+    public void toggleDebugMode() {
+        debugMode = !debugMode;
+
+        // TO DO - debugmode
+        //config.set("debug", debugMode);
+        //saveConfig()
+    }
+    
 
     /**
      * Gets hook manager.
@@ -134,5 +145,15 @@ public class AlathraHorseCombat extends JavaPlugin {
     @NotNull
     public UpdateHandler getUpdateHandler() {
         return updateHandler;
+    }
+
+    /**
+     * Gets config handler.
+     *
+     * @return the config handler
+     */
+    @NotNull
+    public ConfigHandler getConfigHandler() {
+        return configHandler;
     }
 }

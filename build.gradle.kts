@@ -47,6 +47,10 @@ repositories {
             includeGroup("com.palmergames.bukkit.towny") // Towny
         }
     }
+
+    maven("https://repo.nexomc.com/releases")
+    maven("https://repo.oraxen.com/releases")
+    maven("https://maven.devs.beer") // ItemsAdder API Dependency
 }
 
 dependencies {
@@ -83,6 +87,9 @@ dependencies {
     compileOnly(libs.towny) {
         exclude("com.palmergames.adventure")
     }
+    compileOnly(libs.nexo)
+    compileOnly(libs.oraxen)
+    compileOnly(libs.itemsadder)
 
     // Database dependencies - Core
     implementation(libs.hikaricp)
@@ -221,7 +228,7 @@ bukkit { // Options: https://github.com/Minecrell/plugin-yml#bukkit
     // Misc properties
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD // STARTUP or POSTWORLD
     depend = listOf()
-    softDepend = listOf("PacketEvents", "Vault", "PlaceholderAPI")
+    softDepend = listOf("PacketEvents", "Vault", "PlaceholderAPI", "Nexo", "Oraxen", "ItemsAdder")
     loadBefore = listOf()
     provides = listOf()
 }

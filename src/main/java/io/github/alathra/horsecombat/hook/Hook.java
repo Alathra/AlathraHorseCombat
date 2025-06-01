@@ -17,7 +17,7 @@ public enum Hook {
     PAPI(PAPIHook.class, "PlaceholderAPI", true),
     PacketEvents(PacketEventsHook.class, "PacketEvents", true),
     Vault(VaultHook.class, "Vault", true),
-    TownyHook(TownyHook.class, "Towny", true);
+    Towny(TownyHook.class, "Towny", true);
 
     private final @NotNull Class<? extends AbstractHook> hookClass; // The hook class used by this hook
     private final @Nullable String pluginName; // The plugin name used by this hook or null if not applicable
@@ -159,6 +159,6 @@ public enum Hook {
      */
     @NotNull
     public static TownyHook getTownyHook() {
-        return (TownyHook) Hook.TownyHook.get();
+        return (TownyHook) Hook.Towny.get();
     }
 }
