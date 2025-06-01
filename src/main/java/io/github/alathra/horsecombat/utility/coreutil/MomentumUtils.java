@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 public class MomentumUtils {
-    private static HashMap<UUID, Integer> momentumMap = new HashMap<>();
+    private static final HashMap<UUID, Integer> momentumMap = new HashMap<>();
 
     public static void increaseMomentum(Player player, int amount) {
         UUID uuid = player.getUniqueId();
