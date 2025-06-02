@@ -213,7 +213,7 @@ tasks.named<Jar>("sourcesJar") { // Required for sources jar generation with jOO
 
 bukkit { // Options: https://github.com/Minecrell/plugin-yml#bukkit
     // Plugin main class (required)
-    main = project.entryPointClass
+    main = "io.github.alathra.horsecombat.AlathraHorseCombat"
 
     // Plugin Information
     name = project.name

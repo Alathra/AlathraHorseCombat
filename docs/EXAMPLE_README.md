@@ -87,13 +87,13 @@ We provide API for developers accessible through [JitPack](https://jitpack.io/).
 repositories {
     maven("https://jitpack.io") {
         content {
-            includeGroup("io.github.exampleuser")
+            includeGroup("io.github.alathra")
         }
     }
 }
 
 dependencies {
-    compileOnly("io.github.exampleuser:AlathraHorseCombat:VERSION")
+    compileOnly("io.github.alathra:AlathraHorseCombat:VERSION")
 }
 ```
 </details>
@@ -112,7 +112,7 @@ dependencies {
 
     <dependencies>
         <dependency>
-            <groupId>io.github.exampleuser</groupId>
+            <groupId>io.github.alathra</groupId>
             <artifactId>AlathraHorseCombat</artifactId>
             <version>VERSION</version>
             <scope>provided</scope>

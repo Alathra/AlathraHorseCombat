@@ -52,7 +52,7 @@ momentum:
 # Display settings
 display:
   useActionBar: true         # Whether to show momentum on the action bar
-  actionBarFormat: "&bMomentum: %momentum%/100"
+  actionBarFormat: "<cyan>Momentum: %momentum%/100"
 
 # Visual effects settings
 effects:

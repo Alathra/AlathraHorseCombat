@@ -15,10 +15,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import static io.github.alathra.alathrahorsecombat.database.schema.Tables.COLORS;
+import static io.github.alathra.alathrahorsecombat.database.schema.Tables.SOME_LIST;
 import static io.github.alathra.horsecombat.database.QueryUtils.BooleanUtil;
 import static io.github.alathra.horsecombat.database.QueryUtils.UUIDUtil;
-import static io.github.alathra.horsecombat.database.schema.Tables.COLORS;
-import static io.github.alathra.horsecombat.database.schema.Tables.SOME_LIST;
 
 /**
  * A class providing access to all SQL queries.
