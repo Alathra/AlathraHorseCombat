@@ -1,13 +1,11 @@
 [versions]
 crate = "4.0.0-RC.2"
-commandapi = "10.1.0"
-flyway = "11.8.0"
-jooq = "3.20.3"
+commandapi = "10.0.1"
 
 [libraries]
 # Core dependencies
 annotations = "org.jetbrains:annotations:26.0.2"
-paper-api = "io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT"
+paper-api = "io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT"
 morepaperlib = "space.arim.morepaperlib:morepaperlib:0.4.4"
 
 # API dependencies
@@ -23,43 +21,12 @@ commandapi-annotations = { module = "dev.jorel:commandapi-annotations", version.
 triumph-gui = "dev.triumphteam:triumph-gui:3.1.12"
 
 # Plugin dependencies
-bstats = "org.bstats:bstats-bukkit:3.1.0"
 vault = "com.github.MilkBowl:VaultAPI:1.7.1"
-packetevents = "com.github.retrooper:packetevents-spigot:2.7.0"
 placeholderapi = "me.clip:placeholderapi:2.11.6"
 towny = "com.palmergames.bukkit.towny:towny:0.101.1.6"
 nexo = "com.nexomc:nexo:1.6.0"
 oraxen = "io.th0rgal:oraxen:1.190.0"
 itemsadder = "dev.lone:api-itemsadder:4.0.10"
-
-# Database dependencies
-hikaricp = "com.zaxxer:HikariCP:6.3.0"
-flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
-flyway-mysql = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
-jooq = { module = "org.jooq:jooq", version.ref = "jooq" }
-jakarta = "jakarta.xml.bind:jakarta.xml.bind-api:4.0.2" # Compiler bug, see: https://github.com/jOOQ/jOOQ/issues/14865#issuecomment-2077182512
-
-# JDBC drivers
-h2 = "com.h2database:h2:2.3.232"
-sqlite = "org.xerial:sqlite-jdbc:3.49.1.0"
-mysql = "com.mysql:mysql-connector-j:9.3.0"
-mariadb = "org.mariadb.jdbc:mariadb-java-client:3.5.3"
-
-# Testing
-junit-bom = "org.junit:junit-bom:5.12.2"
-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
-junit-platform = { module = "org.junit.platform:junit-platform-launcher" }
-slf4j = "org.slf4j:slf4j-simple:2.0.17"
-testcontainers-bom = "org.testcontainers:testcontainers-bom:1.21.0"
-testcontainers-jupiter = { module = "org.testcontainers:junit-jupiter" }
-testcontainers-mysql = { module = "org.testcontainers:mysql" }
-testcontainers-mariadb = { module = "org.testcontainers:mariadb" }
-
-[bundles]
-flyway = ["flyway-core", "flyway-mysql"]
-jdbcdrivers = ["h2", "sqlite", "mysql", "mariadb"]
-junit = ["junit-jupiter", "junit-platform"]
-testcontainers = ["testcontainers-jupiter", "testcontainers-mysql", "testcontainers-mariadb"]
 
 [plugins]
 shadow = "com.gradleup.shadow:8.3.6"

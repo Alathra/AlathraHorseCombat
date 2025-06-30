@@ -1,7 +1,5 @@
 package io.github.alathra.horsecombat.hook;
 
-import io.github.alathra.horsecombat.hook.bstats.BStatsHook;
-import io.github.alathra.horsecombat.hook.packetevents.PacketEventsHook;
 import io.github.alathra.horsecombat.hook.placeholderapi.PAPIHook;
 import io.github.alathra.horsecombat.hook.towny.TownyHook;
 import io.github.alathra.horsecombat.hook.vault.VaultHook;
@@ -13,9 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * Enum of all hooks used by the plugin.
  */
 public enum Hook {
-    BStats(BStatsHook.class, null, false),
     PAPI(PAPIHook.class, "PlaceholderAPI", true),
-    PacketEvents(PacketEventsHook.class, "PacketEvents", true),
     Vault(VaultHook.class, "Vault", true),
     Towny(TownyHook.class, "Towny", true);
 
@@ -113,16 +109,6 @@ public enum Hook {
     }
 
     /**
-     * Gets bStats hook.
-     *
-     * @return the bStats hook
-     */
-    @NotNull
-    public static BStatsHook getBStatsHook() {
-        return (BStatsHook) Hook.BStats.get();
-    }
-
-    /**
      * Gets papi hook.
      *
      * @return the papi hook
@@ -140,16 +126,6 @@ public enum Hook {
     @NotNull
     public static VaultHook getVaultHook() {
         return (VaultHook) Hook.Vault.get();
-    }
-
-    /**
-     * Gets PacketEvents hook.
-     *
-     * @return the PacketEvents hook
-     */
-    @NotNull
-    public static PacketEventsHook getPacketEventsHook() {
-        return (PacketEventsHook) Hook.PacketEvents.get();
     }
 
     /**
