@@ -17,7 +17,7 @@ crate-yaml = { module = "io.github.milkdrinkers:crate-yaml", version.ref = "crat
 colorparser = "io.github.milkdrinkers:colorparser:3.0.1"
 threadutil-bukkit = "io.github.milkdrinkers:threadutil-bukkit:1.2.0"
 commandapi-shade = { module = "dev.jorel:commandapi-bukkit-shade", version.ref = "commandapi" }
-commandapi-annotations = { module = "dev.jorel:commandapi-annotations", version.ref = "commandapi" }
+#commandapi-annotations = { module = "dev.jorel:commandapi-annotations", version.ref = "commandapi" }
 triumph-gui = "dev.triumphteam:triumph-gui:3.1.12"
 
 # Plugin dependencies
@@ -32,6 +32,6 @@ itemsadder = "dev.lone:api-itemsadder:4.0.10"
 shadow = "com.gradleup.shadow:8.3.6"
 run-paper = "xyz.jpenilla.run-paper:2.3.1"
 plugin-yml = "de.eldoria.plugin-yml.bukkit:0.7.1"
-paperweight = "io.papermc.paperweight.userdev:1.7.7"
-flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
-jooq = { id = "org.jooq.jooq-codegen-gradle", version.ref = "jooq" }
+#paperweight = "io.papermc.paperweight.userdev:1.7.7"
+#flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
+#jooq = { id = "org.jooq.jooq-codegen-gradle", version.ref = "jooq" }
