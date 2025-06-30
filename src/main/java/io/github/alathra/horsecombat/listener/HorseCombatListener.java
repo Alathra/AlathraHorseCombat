@@ -187,7 +187,7 @@ public class HorseCombatListener implements Listener {
 
             try {
                 damagingPlayer.getWorld().playSound(targetEntity.getLocation(), hitSoundString, 1f, 1f);
-            } catch (IllegalArgumentException e) {
+            } catch (Exception e) {
                 // Log invalid sound and fall back to default
                 if (plugin.isDebugEnabled()) {
                     plugin.getLogger().warning("Invalid sound in config: $hitSoundString. Using default sound.");

@@ -10,18 +10,18 @@ language: "en_US"
 # Lance Settings
 lance:
   itemIdList:
-    - "nexo:copper_lance"
-    - "nexo:iron_lance"
-    - "nexo:gold_lance"
-    - "nexo:steel_lance"
-    - "nexo:diamond_lance"
-    - "nexo:netherite_lance"
-    - "nexo:copper_pike"
-    - "nexo:iron_pike"
-    - "nexo:gold_pike"
-    - "nexo:steel_pike"
-    - "nexo:diamond_pike"
-    - "nexo:netherite_pike"
+    - "copper_lance"
+    - "iron_lance"
+    - "gold_lance"
+    - "steel_lance"
+    - "diamond_lance"
+    - "netherite_lance"
+    - "copper_pike"
+    - "iron_pike"
+    - "gold_pike"
+    - "steel_pike"
+    - "diamond_pike"
+    - "netherite_pike"
 
 # Combat Settings
 combat:
@@ -34,7 +34,7 @@ combat:
   slownessLevel: 1
 
 sounds:
-  hit: "ENTITY_SLIME_ATTACK"
+  hit: "minecraft:entity.slime.attack"
 
 towny:
   enabled: true
@@ -52,7 +52,7 @@ momentum:
 # Display settings
 display:
   useActionBar: true         # Whether to show momentum on the action bar
-  actionBarFormat: "<cyan>Momentum: %momentum%/100"
+  actionBarFormat: "<aqua>Momentum: %momentum%/100"
 
 # Visual effects settings
 effects:
