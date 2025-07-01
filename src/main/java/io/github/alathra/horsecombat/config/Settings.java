@@ -25,10 +25,6 @@ public class Settings {
     }
 
     // Combat configs
-    public static double getMaxDamage() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("combat.maxDamage", 10.0);
-    }
-
     public static double getMobDamageMultiplier() {
         return plugin.getConfigHandler().getConfig().getOrDefault("combat.mobDamageMultiplier", 1.5);
     }
@@ -81,6 +77,26 @@ public class Settings {
 
     public static int getStraightGain() {
         return plugin.getConfigHandler().getConfig().getOrDefault("momentum.straightGain", 1);
+    }
+
+    public static double getDamageMultiplierAtMaxMomentum() {
+        return plugin.getConfigHandler().getConfig().getOrDefault("momentum.momentumDamageMultiplier.momentum_100", 2.5);
+    }
+
+    public static double getDamageMultiplierFrom75To99Momentum() {
+        return plugin.getConfigHandler().getConfig().getOrDefault("momentum.momentumDamageMultiplier.momentum_75-99", 2);
+    }
+
+    public static double getDamageMultiplierFrom50To74Momentum() {
+        return plugin.getConfigHandler().getConfig().getOrDefault("momentum.momentumDamageMultiplier.momentum_50-74", 1.5);
+    }
+
+    public static double getDamageMultiplierFrom25To49Momentum() {
+        return plugin.getConfigHandler().getConfig().getOrDefault("momentum.momentumDamageMultiplier.momentum_25-49", 1);
+    }
+
+    public static double getDamageMultiplierFrom0To24Momentum() {
+        return plugin.getConfigHandler().getConfig().getOrDefault("momentum.momentumDamageMultiplier.momentum_0-24", 0.5);
     }
 
     // Display Settings

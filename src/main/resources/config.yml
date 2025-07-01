@@ -25,7 +25,6 @@ lance:
 
 # Combat Settings
 combat:
-  maxDamage: 10.0
   mobDamageMultiplier: 1.5
   knockoffThreshold: 50
   footDamage: 0.5
@@ -48,6 +47,12 @@ momentum:
   turnThreshold: 30.0
   turnLoss: 10.0
   straightGain: 1
+  momentumDamageMultiplier:
+    momentum_100: 2.5
+    momentum_75-99: 2
+    momentum_50-74: 1.5
+    momentum_25-49: 1
+    momentum_0-24: 0.5
 
 # Display settings
 display:

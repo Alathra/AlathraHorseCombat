@@ -120,14 +120,14 @@ public class HorseCombatListener implements Listener {
             if (damagingPlayer.getVehicle() instanceof Horse) {
                 // Attacker is on a horse
                 int momentum = MomentumUtils.getMomentum(damagingPlayer);
-                double maxDamage = Settings.getMaxDamage(); // default 10.0
+                double originalDamage = event.getDamage();
                 double mobDamageMultiplier = 1.0;
 
                 if (!(targetEntity instanceof Player)) {
                     mobDamageMultiplier = Settings.getMobDamageMultiplier(); // default 1.5
                 }
 
-                double baseDamage = getBaseDamage(momentum, maxDamage);
+                double baseDamage = getBaseDamage(momentum, originalDamage);
 
                 // Apply the mob multiplier if target is not a player
                 double damage = baseDamage * mobDamageMultiplier;
@@ -327,11 +327,11 @@ public class HorseCombatListener implements Listener {
         }
     }
 
-    private double getBaseDamage(int momentum, double maxDamage) {
-        if (momentum >= 100) return maxDamage;
-        if (momentum >= 75) return maxDamage * 0.75;
-        if (momentum >= 50) return maxDamage * 0.5;
-        if (momentum >= 25) return maxDamage * 0.25;
-        return maxDamage * 0.1;
+    private double getBaseDamage(int momentum, double damage) {
+        if (momentum >= 100) return damage * Settings.getDamageMultiplierAtMaxMomentum();
+        if (momentum >= 75) return damage * Settings.getDamageMultiplierFrom75To99Momentum();
+        if (momentum >= 50) return damage * Settings.getDamageMultiplierFrom50To74Momentum();
+        if (momentum >= 25) return damage * Settings.getDamageMultiplierFrom25To49Momentum();
+        return damage * Settings.getDamageMultiplierFrom0To24Momentum();
     }
 }
