@@ -104,10 +104,6 @@ public class Settings {
     }
 
     // Display Settings
-    public static boolean shouldUseActionBar() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("display.useActionBar", true);
-    }
-
     public static String getActionBarFormat() {
         return plugin.getConfigHandler().getConfig().getOrDefault("display.actionBarFormat", "<aqua>Momentum: %momentum%/100");
     }

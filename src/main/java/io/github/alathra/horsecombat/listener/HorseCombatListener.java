@@ -282,13 +282,10 @@ public class HorseCombatListener implements Listener {
     private void updateMomentumBar(Player player) {
         int momentum = MomentumUtils.getMomentum(player);
 
-        // Show action bar message if configured to do so
-        if (Settings.shouldUseActionBar()) { // default true
-            String format = Settings.getActionBarFormat();
-            String message = format.replace("%momentum%", String.valueOf(momentum));
+        String format = Settings.getActionBarFormat();
+        String message = format.replace("%momentum%", String.valueOf(momentum));
 
-            player.sendActionBar(ColorParser.of(message).build());
-        }
+        player.sendActionBar(ColorParser.of(message).build());
     }
 
     private void playMomentumSounds(Player player, int momentum) {
@@ -312,6 +309,7 @@ public class HorseCombatListener implements Listener {
         if (momentum >= 75) return damage * Settings.getDamageMultiplierFrom75To99Momentum();
         if (momentum >= 50) return damage * Settings.getDamageMultiplierFrom50To74Momentum();
         if (momentum >= 25) return damage * Settings.getDamageMultiplierFrom25To49Momentum();
+
         return damage * Settings.getDamageMultiplierFrom0To24Momentum();
     }
 }

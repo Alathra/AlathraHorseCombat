@@ -57,7 +57,6 @@ momentum:
 
 # Display settings
 display:
-  useActionBar: true         # Whether to show momentum on the action bar
   actionBarFormat: "<aqua>Momentum: %momentum%/100"
 
 # Visual effects settings
