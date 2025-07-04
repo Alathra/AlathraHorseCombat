@@ -6,6 +6,7 @@ import com.palmergames.bukkit.towny.object.TownBlock;
 import io.github.alathra.horsecombat.AlathraHorseCombat;
 import io.github.alathra.horsecombat.config.Settings;
 import io.github.alathra.horsecombat.hook.Hook;
+import io.github.alathra.horsecombat.utility.coreutil.HorseState;
 import io.github.alathra.horsecombat.utility.coreutil.MomentumUtils;
 import io.github.alathra.horsecombat.utility.itemutil.ItemProvider;
 import io.github.milkdrinkers.colorparser.ColorParser;
@@ -23,7 +24,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,32 +33,22 @@ public class HorseCombatListener implements Listener {
     public static String townyBypassPermission = "horsecombat.admin.townybypass";
 
     AlathraHorseCombat plugin = AlathraHorseCombat.getInstance();
-
-    // Map to store the previous yaw of each horse
-    private final HashMap<UUID, Float> horseYawMap = new HashMap<>();
-
-    // Map to store the previous location of each horse
-    private final HashMap<UUID, Vector> horseLocationMap = new HashMap<>();
-
-    // Map to store the last movement time of each horse
-    private final HashMap<UUID, Long> horseLastMoveMap = new HashMap<>();
+    private final HashMap<UUID, HorseState> horseStateMap = new HashMap<>();
 
     // Set to track entities currently being damaged to prevent infinite loops
     private final HashSet<UUID> entitiesBeingDamaged = new HashSet<>();
 
-    // Store decay rate for rapid momentum drop
-    private final HashMap<UUID, Integer> momentumDecayRates = new HashMap<>();
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
-        Entity damagingEntity = event.getDamager();
-        Entity targetEntity = event.getEntity();
-
         // Skip if the event is already cancelled (e.g., by a claim plugin)
         if (event.isCancelled()) return;
 
+        Entity damagingEntity = event.getDamager();
+
         // Skip if the attacker is not a player and initialize damagingEntity to damagingPlayer
         if (!(damagingEntity instanceof Player damagingPlayer)) return;
+
+        Entity targetEntity = event.getEntity();
 
         // Skip if the target is not a living entity (we want to hit mobs and players)
         if (!(targetEntity instanceof LivingEntity)) return;
@@ -208,38 +198,35 @@ public class HorseCombatListener implements Listener {
 
         if (player.getVehicle() instanceof Horse horse) {
             UUID horseUuid = horse.getUniqueId();
-            Long currentTime = System.currentTimeMillis();
+            long currentTime = System.currentTimeMillis();
+            Location currentLocation = horse.getLocation();
+            float currentYaw = currentLocation.getYaw();
 
-            // Get current location as vector for distance calculation
-            Vector currentLocation = horse.getLocation().toVector();
-            float currentYaw = horse.getLocation().getYaw();
-
-            // Get previous states
-            Vector previousLocation = horseLocationMap.getOrDefault(horseUuid, currentLocation);
-            float previousYaw = horseYawMap.getOrDefault(horseUuid, currentYaw);
+            // Get HorseState
+            HorseState horseState = horseStateMap.computeIfAbsent(horseUuid, id -> new HorseState(currentLocation, currentTime));
 
             // Check if the horse has moved
-            double distance = currentLocation.distance(previousLocation);
+            double distanceSquared = horseState.distanceSquared(currentLocation);
             double movementThreshold = Settings.getMovementThreshold(); // default is 0.05
 
-            if (distance < movementThreshold) {
+            if (distanceSquared < movementThreshold * movementThreshold) {
                 // Horse isn't moving (or moving very little)
                 Long stallTime = Settings.getStallTimeMs(); // default is 0.5 seconds or 500ms
-                Long lastMoveTime = horseLastMoveMap.getOrDefault(horseUuid, currentTime);
 
-                if (currentTime - lastMoveTime > stallTime) {
+                if (currentTime - horseState.lastMoveTime > stallTime) {
                     // Horse has been still for the configured time
                     // Get momentum decay rate (how quickly momentum drops when standing still)
-                    int decayRate = momentumDecayRates.getOrDefault(horseUuid, 5);
+                    int decayRate = horseState.decayRate;
                     int maxDecayRate = Settings.getMaxDecayRate(); // default is 20
 
                     // Rapidly drop momentum, but not instantly
                     MomentumUtils.reduceMomentum(player, decayRate);
 
                     // Increase decay rate for progressive momentum loss
-                    momentumDecayRates.put(horseUuid, Math.max(decayRate + 2, maxDecayRate));
+                    horseState.decayRate = Math.min(decayRate + 2, maxDecayRate);
 
                     updateMomentumBar(player);
+
                     // Use only sound feedback for stopping - minimal particles
                     if (Settings.shouldShowStopEffects()) { // default true
                         player.getWorld().playSound(horse.getLocation(), Sound.ENTITY_HORSE_BREATHE, 0.5f, 0.8f);
@@ -251,13 +238,13 @@ public class HorseCombatListener implements Listener {
                 }
             } else {
                 // Horse is moving, update last move time
-                horseLastMoveMap.put(horseUuid, currentTime);
+                horseState.lastMoveTime = currentTime;
 
                 // Reset decay rate when moving again
-                momentumDecayRates.put(horseUuid, 5);
+                horseState.decayRate = 5;
 
                 // Calculate the difference in yaw (angle change)
-                float yawDifference = Math.abs(angleDifference(currentYaw, previousYaw));
+                float yawDifference = horseState.yawDifference(currentYaw);
                 double turnThreshold = Settings.getTurnThreshold(); // default 30.0
 
                 if (yawDifference > turnThreshold) {
@@ -286,19 +273,10 @@ public class HorseCombatListener implements Listener {
                 }
             }
 
-            horseYawMap.put(horseUuid, currentYaw);
-            horseLocationMap.put(horseUuid, currentLocation);
+            horseState.lastX = currentLocation.getX();
+            horseState.lastZ = currentLocation.getZ();
+            horseState.lastYaw = currentYaw;
         }
-    }
-
-    // Helper function to properly calculate angle differences (handles wrap-around)
-    private float angleDifference(float angle1, float angle2) {
-        float diff = (angle1 - angle2) % 360;
-
-        if (diff < -180) diff += 360;
-        if (diff > 180) diff -= 360;
-
-        return Math.abs(diff);
     }
 
     private void updateMomentumBar(Player player) {
