@@ -10,6 +10,7 @@ import io.github.alathra.horsecombat.utility.coreutil.HorseState;
 import io.github.alathra.horsecombat.utility.coreutil.MomentumUtils;
 import io.github.alathra.horsecombat.utility.itemutil.ItemProvider;
 import io.github.milkdrinkers.colorparser.ColorParser;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -24,9 +25,11 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 
 public class HorseCombatListener implements Listener {
@@ -203,7 +206,7 @@ public class HorseCombatListener implements Listener {
             float currentYaw = currentLocation.getYaw();
 
             // Get HorseState
-            HorseState horseState = horseStateMap.computeIfAbsent(horseUuid, id -> new HorseState(currentLocation, currentTime));
+            HorseState horseState = horseStateMap.computeIfAbsent(horseUuid, id -> new HorseState(currentLocation, 0L));
 
             // Check if the horse has moved
             double distanceSquared = horseState.distanceSquared(currentLocation);
@@ -237,7 +240,6 @@ public class HorseCombatListener implements Listener {
                     }
                 }
             } else {
-                // update horseState when moving
                 horseState.update(currentLocation, currentTime);
 
                 // Calculate the difference in yaw (angle change)
@@ -269,8 +271,6 @@ public class HorseCombatListener implements Listener {
                     }
                 }
             }
-
-
         }
     }
 

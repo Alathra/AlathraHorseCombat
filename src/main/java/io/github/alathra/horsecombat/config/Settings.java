@@ -60,7 +60,7 @@ public class Settings {
 
     // Momentum Configs
     public static double getMovementThreshold() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("momentum.movementThreshold", 0.05);
+        return plugin.getConfigHandler().getConfig().getOrDefault("momentum.movementThreshold", 0.7);
     }
 
     public static Long getStallTimeMs() {
@@ -80,7 +80,7 @@ public class Settings {
     }
 
     public static int getStraightGain() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("momentum.straightGain", 1);
+        return plugin.getConfigHandler().getConfig().getOrDefault("momentum.straightGain", 2);
     }
 
     public static double getDamageMultiplierAtMaxMomentum() {

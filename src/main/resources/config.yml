@@ -42,12 +42,12 @@ towny:
   protectMobs: true
 
 momentum:
-  movementThreshold: 0.05
+  movementThreshold: 0.7
   stallTimeMs: 500
   maxDecayRate: 20
   turnThreshold: 30.0
   turnLoss: 10.0
-  straightGain: 1
+  straightGain: 2 # only accepts integers
   momentumDamageMultiplier:
     momentum_100: 2.5
     momentum_75-99: 2
@@ -63,7 +63,3 @@ display:
 effects:
   showTurnEffects: true     # Show particles and play sounds on turns
   showStopEffects: true     # Show particles and play sounds when stopping
-
-horseSpawning:
-  # bonusHealth gives all horses a set additional health, on top of their existing original health
-  bonusHealth: 20

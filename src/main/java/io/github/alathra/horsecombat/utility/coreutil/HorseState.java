@@ -3,7 +3,7 @@ package io.github.alathra.horsecombat.utility.coreutil;
 import org.bukkit.Location;
 
 public class HorseState {
-    public double lastX, lastZ; // location is not stored, since Y is not used
+    public double lastX, lastZ;
     public float lastYaw;
     public long lastMoveTime;
     public int decayRate;
