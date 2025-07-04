@@ -10,7 +10,6 @@ import io.github.alathra.horsecombat.utility.coreutil.HorseState;
 import io.github.alathra.horsecombat.utility.coreutil.MomentumUtils;
 import io.github.alathra.horsecombat.utility.itemutil.ItemProvider;
 import io.github.milkdrinkers.colorparser.ColorParser;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -25,11 +24,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.UUID;
 
 public class HorseCombatListener implements Listener {
@@ -240,8 +237,6 @@ public class HorseCombatListener implements Listener {
                     }
                 }
             } else {
-                horseState.update(currentLocation, currentTime);
-
                 // Calculate the difference in yaw (angle change)
                 float yawDifference = horseState.yawDifference(currentYaw);
                 double turnThreshold = Settings.getTurnThreshold(); // default 30.0
@@ -270,6 +265,8 @@ public class HorseCombatListener implements Listener {
                         plugin.getLogger().info("Player ${player.name} momentum increasing: ${MomentumUtils.getMomentum(player)}");
                     }
                 }
+
+                horseState.update(currentLocation, currentTime);
             }
         }
     }

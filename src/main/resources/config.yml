@@ -42,12 +42,12 @@ towny:
   protectMobs: true
 
 momentum:
-  movementThreshold: 0.7
+  movementThreshold: 1.25
   stallTimeMs: 500
   maxDecayRate: 20
-  turnThreshold: 30.0
-  turnLoss: 10.0
-  straightGain: 2 # only accepts integers
+  turnThreshold: 50.0
+  turnLoss: 20.0
+  straightGain: 2
   momentumDamageMultiplier:
     momentum_100: 2.5
     momentum_75-99: 2
