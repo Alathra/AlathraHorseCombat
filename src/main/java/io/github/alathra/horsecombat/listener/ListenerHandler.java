@@ -32,6 +32,7 @@ public class ListenerHandler implements Reloadable {
         listeners.clear(); // Clear the list to avoid duplicate listeners when reloading the plugin
         listeners.add(new HorseCombatListener());
         listeners.add(new HorseDismountListener());
+        listeners.add(new HorseSpawnListener());
 
         // Register listeners here
         for (Listener listener : listeners) {

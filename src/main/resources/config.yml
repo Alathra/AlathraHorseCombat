@@ -64,3 +64,7 @@ display:
 effects:
   showTurnEffects: true     # Show particles and play sounds on turns
   showStopEffects: true     # Show particles and play sounds when stopping
+
+horseSpawning:
+  # bonusHealth gives all horses a set additional health, on top of their existing original health
+  bonusHealth: 20

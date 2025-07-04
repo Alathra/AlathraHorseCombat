@@ -120,4 +120,9 @@ public class Settings {
     public static boolean shouldShowStopEffects() {
         return plugin.getConfigHandler().getConfig().getOrDefault("effects.showStopEffects", true);
     }
+
+    // Horse Spawning Settings
+    public static int getBonusHealth() {
+        return plugin.getConfigHandler().getConfig().getOrDefault("horseSpawning.bonusHealth", 20);
+    }
 }
