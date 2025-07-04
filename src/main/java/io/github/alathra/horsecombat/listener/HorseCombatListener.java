@@ -167,7 +167,7 @@ public class HorseCombatListener implements Listener {
                     footDamage = Settings.getFootDamageMobs(); // default is 1.0
                 }
 
-                ((LivingEntity) targetEntity).damage(footDamage); // Apply configurable damage
+                ((LivingEntity) targetEntity).damage(event.getDamage() * footDamage); // Apply configurable damage
 
                 int slownessDuration = Settings.getSlownessDuration(); // default is 100
                 int slownessLevel = Settings.getSlownessLevel(); // default is 1
