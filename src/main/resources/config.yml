@@ -27,6 +27,7 @@ lance:
 combat:
   mobDamageMultiplier: 1.5
   knockoffThreshold: 50
+  knockoffChance: 0.33
   footDamage: 0.5
   footDamageMobs: 1.0
   slownessDuration: 100

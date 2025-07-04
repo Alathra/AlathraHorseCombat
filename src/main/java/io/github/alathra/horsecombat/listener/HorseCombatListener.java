@@ -144,12 +144,14 @@ public class HorseCombatListener implements Listener {
                 int knockoffThreshold = Settings.getKnockoffThreshold(); // default is 50
 
                 if (momentum >= knockoffThreshold && targetEntity.getVehicle() != null) {
-                    // Add delay before ejecting to avoid damage cancellation
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                        if (targetEntity.isValid() && targetEntity.getVehicle() != null) {
-                            targetEntity.getVehicle().eject();
-                        }
-                    }, 2L); // 2 tick delay (0.1 seconds)
+                    if (Settings.getKnockoffChance() > Math.random()) {
+                        // Add delay before ejecting to avoid damage cancellation
+                        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                            if (targetEntity.isValid() && targetEntity.getVehicle() != null) {
+                                targetEntity.getVehicle().eject();
+                            }
+                        }, 2L); // 2 tick delay (0.1 seconds)
+                    }
                 }
 
                 // Apply knockback to mobs (not for players, as it can be annoying in PvP)

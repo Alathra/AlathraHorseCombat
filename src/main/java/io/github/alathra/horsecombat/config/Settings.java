@@ -33,6 +33,10 @@ public class Settings {
         return plugin.getConfigHandler().getConfig().getOrDefault("combat.knockoffThreshold", 50);
     }
 
+    public static double getKnockoffChance() {
+        return plugin.getConfigHandler().getConfig().getOrDefault("combat.knockoffChance", 0.33);
+    }
+
     public static double getFootDamage() {
         return plugin.getConfigHandler().getConfig().getOrDefault("combat.footDamage", 0.5);
     }
