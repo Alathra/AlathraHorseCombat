@@ -25,4 +25,12 @@ public class HorseState {
     public float yawDifference(float currentYaw) {
         return Math.abs((currentYaw - lastYaw + 540f) % 360f - 180f);
     }
+
+    public void update(Location currentLocation, Long currentTime) {
+        lastX = currentLocation.getX();
+        lastZ = currentLocation.getZ();
+        lastYaw = currentLocation.getYaw();
+        lastMoveTime = currentTime;
+        decayRate = 5;
+    }
 }

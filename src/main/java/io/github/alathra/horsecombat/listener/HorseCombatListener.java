@@ -229,7 +229,7 @@ public class HorseCombatListener implements Listener {
 
                     // Use only sound feedback for stopping - minimal particles
                     if (Settings.shouldShowStopEffects()) { // default true
-                        player.getWorld().playSound(horse.getLocation(), Sound.ENTITY_HORSE_BREATHE, 0.5f, 0.8f);
+                        player.getWorld().playSound(currentLocation, Sound.ENTITY_HORSE_BREATHE, 0.5f, 0.8f);
                     }
 
                     if (plugin.isDebugEnabled() && MomentumUtils.getMomentum(player) % 10 == 0) {
@@ -237,11 +237,8 @@ public class HorseCombatListener implements Listener {
                     }
                 }
             } else {
-                // Horse is moving, update last move time
-                horseState.lastMoveTime = currentTime;
-
-                // Reset decay rate when moving again
-                horseState.decayRate = 5;
+                // update horseState when moving
+                horseState.update(currentLocation, currentTime);
 
                 // Calculate the difference in yaw (angle change)
                 float yawDifference = horseState.yawDifference(currentYaw);
@@ -255,7 +252,7 @@ public class HorseCombatListener implements Listener {
 
                     // Just use sound feedback for turns - no particles
                     if (Settings.shouldShowTurnEffects()) { // default is true
-                        player.getWorld().playSound(horse.getLocation(), Sound.ENTITY_HORSE_BREATHE, 1f, 1f);
+                        player.getWorld().playSound(currentLocation, Sound.ENTITY_HORSE_BREATHE, 1f, 1f);
                     }
 
                     if (plugin.isDebugEnabled()) {
@@ -273,9 +270,7 @@ public class HorseCombatListener implements Listener {
                 }
             }
 
-            horseState.lastX = currentLocation.getX();
-            horseState.lastZ = currentLocation.getZ();
-            horseState.lastYaw = currentYaw;
+
         }
     }
 
