@@ -156,6 +156,11 @@ public class HorseCombatListener implements Listener {
 
                 // Reset momentum after attack
                 MomentumUtils.resetMomentum(damagingPlayer);
+
+                // Play "clink" sound when player registers a hit
+                if (Settings.isHitSoundEnabled())
+                    damagingPlayer.getWorld().playSound(Settings.getHitSound());
+
             } else {
                 // Attacker is on foot
                 double footDamage;
@@ -168,24 +173,8 @@ public class HorseCombatListener implements Listener {
                 }
 
                 ((LivingEntity) targetEntity).damage(event.getDamage() * footDamage); // Apply configurable damage
-
-                int slownessDuration = Settings.getSlownessDuration(); // default is 100
-                int slownessLevel = Settings.getSlownessLevel(); // default is 1
-                damagingPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, slownessDuration, slownessLevel));
             }
 
-            // Play hit sound - safely handle nullable value
-            String hitSoundString = Settings.getSoundHit(); // default is ENTITY_SLIME_ATTACK
-
-            try {
-                damagingPlayer.getWorld().playSound(targetEntity.getLocation(), hitSoundString, 1f, 1f);
-            } catch (Exception e) {
-                // Log invalid sound and fall back to default
-                if (plugin.isDebugEnabled()) {
-                    plugin.getLogger().warning("Invalid sound in config: $hitSoundString. Using default sound.");
-                }
-                damagingPlayer.getWorld().playSound(targetEntity.getLocation(), Sound.ENTITY_SLIME_ATTACK, 1f, 1f);
-            }
         } finally {
             // Always remove from processing set when done
             entitiesBeingDamaged.remove(targetUuid);

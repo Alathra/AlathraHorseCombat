@@ -1,8 +1,8 @@
 # Update Checker Settings
 update-checker:
-  enable: true
-  console: true # Post message to console
-  op: true # Send update notification to opped players on join
+  enable: false
+  console: false # Post message to console
+  op: false # Send update notification to opped players on join
 
 # Language, specify the language file to use, for example `en_US` which will load `/lang/en_US.json`
 language: "en_US"
@@ -27,14 +27,16 @@ lance:
 combat:
   mobDamageMultiplier: 1.5
   knockoffThreshold: 50
-  knockoffChance: 0.33
+  knockoffChance: 0.2
   footDamage: 1.0
   footDamageMobs: 1.0
-  slownessDuration: 100
-  slownessLevel: 1
 
 sounds:
-  hit: "minecraft:entity.slime.attack"
+  hit:
+    enabled: true
+    effect: "minecraft:entity.zombie.attack_iron_door"
+    volume: 0.5
+    pitch: 1.0
 
 towny:
   enabled: true
@@ -46,7 +48,7 @@ momentum:
   stallTimeMs: 500
   maxDecayRate: 20
   turnThreshold: 50.0
-  turnLoss: 20.0
+  turnLoss: 15.0
   straightGain: 2
   momentumDamageMultiplier:
     momentum_100: 2.5
@@ -61,5 +63,5 @@ display:
 
 # Visual effects settings
 effects:
-  showTurnEffects: true     # Show particles and play sounds on turns
-  showStopEffects: true     # Show particles and play sounds when stopping
+  showTurnEffects: false     # Show particles and play sounds on turns
+  showStopEffects: false     # Show particles and play sounds when stopping

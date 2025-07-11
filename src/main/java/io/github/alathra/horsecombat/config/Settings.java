@@ -1,6 +1,10 @@
 package io.github.alathra.horsecombat.config;
 
 import io.github.alathra.horsecombat.AlathraHorseCombat;
+import io.github.alathra.horsecombat.utility.Cfg;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import org.intellij.lang.annotations.Subst;
 
 import java.util.List;
 
@@ -45,17 +49,22 @@ public class Settings {
         return plugin.getConfigHandler().getConfig().getOrDefault("combat.footDamageMobs", 1.0);
     }
 
-    public static int getSlownessDuration() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("combat.slownessDuration", 100);
-    }
-
-    public static int getSlownessLevel() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("combat.slownessLevel", 1);
-    }
-
     // Sound Configs
-    public static String getSoundHit() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("sounds.hit", "ENTITY_SLIME_ATTACK");
+    public static boolean isHitSoundEnabled() {
+        return Cfg.get().getOrDefault("sounds.hit.enabled", false);
+    }
+
+    public static Sound getHitSound() {
+        @Subst("minecraft:entity.zombie.attack_iron_door") String soundID = Cfg.get().getOrDefault("sounds.hit.effect", "minecraft:entity.zombie.attack_iron_door");
+        float volume = Cfg.get().getOrDefault("GeneralSettings.LockpickSound.volume", 1.0).floatValue();
+        float pitch = Cfg.get().getOrDefault("GeneralSettings.LockpickSound.pitch", 1.0).floatValue();
+
+        return Sound.sound()
+            .type(Key.key(soundID))
+            .source(Sound.Source.BLOCK)
+            .volume(volume)
+            .pitch(pitch)
+            .build();
     }
 
     // Momentum Configs
