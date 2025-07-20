@@ -24,7 +24,7 @@ triumph-gui = "dev.triumphteam:triumph-gui:3.1.12"
 vault = "com.github.MilkBowl:VaultAPI:1.7.1"
 placeholderapi = "me.clip:placeholderapi:2.11.6"
 towny = "com.palmergames.bukkit.towny:towny:0.101.2.0"
-nexo = "com.nexomc:nexo:1.6.0"
+nexo = "com.nexomc:nexo:1.8.0"
 oraxen = "io.th0rgal:oraxen:1.190.0"
 itemsadder = "dev.lone:api-itemsadder:4.0.10"
 
