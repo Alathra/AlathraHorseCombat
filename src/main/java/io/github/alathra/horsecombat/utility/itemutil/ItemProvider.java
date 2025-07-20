@@ -152,7 +152,7 @@ public enum ItemProvider {
                 yield null;
             }
             case ORAXEN -> OraxenItems.getIdByItem(item);
-            case NEXO -> Objects.requireNonNull(NexoItems.idFromItem(item));
+            case NEXO -> NexoItems.idFromItem(item);
             case ITEMSADDER -> {
                 CustomStack customStack = CustomStack.byItemStack(item);
                 yield customStack != null ? customStack.getNamespacedID() : null;

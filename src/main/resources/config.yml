@@ -1,8 +1,8 @@
 # Update Checker Settings
 update-checker:
-  enable: true
-  console: true # Post message to console
-  op: true # Send update notification to opped players on join
+  enable: false
+  console: false # Post message to console
+  op: false # Send update notification to opped players on join
 
 # Language, specify the language file to use, for example `en_US` which will load `/lang/en_US.json`
 language: "en_US"
@@ -10,31 +10,33 @@ language: "en_US"
 # Lance Settings
 lance:
   itemIdList:
-    - "nexo:copper_lance"
-    - "nexo:iron_lance"
-    - "nexo:gold_lance"
-    - "nexo:steel_lance"
-    - "nexo:diamond_lance"
-    - "nexo:netherite_lance"
-    - "nexo:copper_pike"
-    - "nexo:iron_pike"
-    - "nexo:gold_pike"
-    - "nexo:steel_pike"
-    - "nexo:diamond_pike"
-    - "nexo:netherite_pike"
+    - "copper_lance"
+    - "iron_lance"
+    - "gold_lance"
+    - "steel_lance"
+    - "diamond_lance"
+    - "netherite_lance"
+    - "copper_pike"
+    - "iron_pike"
+    - "gold_pike"
+    - "steel_pike"
+    - "diamond_pike"
+    - "netherite_pike"
 
 # Combat Settings
 combat:
-  maxDamage: 10.0
   mobDamageMultiplier: 1.5
   knockoffThreshold: 50
-  footDamage: 0.5
+  knockoffChance: 0.2
+  footDamage: 1.0
   footDamageMobs: 1.0
-  slownessDuration: 100
-  slownessLevel: 1
 
 sounds:
-  hit: "ENTITY_SLIME_ATTACK"
+  hit:
+    enabled: true
+    effect: "minecraft:entity.zombie.attack_iron_door"
+    volume: 0.5
+    pitch: 1.0
 
 towny:
   enabled: true
@@ -42,19 +44,24 @@ towny:
   protectMobs: true
 
 momentum:
-  movementThreshold: 0.05
+  movementThreshold: 1.25
   stallTimeMs: 500
   maxDecayRate: 20
-  turnThreshold: 30.0
-  turnLoss: 10.0
-  straightGain: 1
+  turnThreshold: 50.0
+  turnLoss: 15.0
+  straightGain: 2
+  momentumDamageMultiplier:
+    momentum_100: 2.5
+    momentum_75-99: 2
+    momentum_50-74: 1.5
+    momentum_25-49: 1
+    momentum_0-24: 0.5
 
 # Display settings
 display:
-  useActionBar: true         # Whether to show momentum on the action bar
-  actionBarFormat: "<cyan>Momentum: %momentum%/100"
+  actionBarFormat: "<aqua>Momentum: %momentum%/100"
 
 # Visual effects settings
 effects:
-  showTurnEffects: true     # Show particles and play sounds on turns
-  showStopEffects: true     # Show particles and play sounds when stopping
+  showTurnEffects: false     # Show particles and play sounds on turns
+  showStopEffects: false     # Show particles and play sounds when stopping

@@ -4,13 +4,11 @@ import io.github.alathra.horsecombat.command.CommandHandler;
 import io.github.alathra.horsecombat.config.ConfigHandler;
 import io.github.alathra.horsecombat.config.Settings;
 import io.github.alathra.horsecombat.hook.HookManager;
+import io.github.alathra.horsecombat.listener.HorseCombatListener;
 import io.github.alathra.horsecombat.listener.ListenerHandler;
 import io.github.alathra.horsecombat.threadutil.SchedulerHandler;
 import io.github.alathra.horsecombat.translation.TranslationHandler;
 import io.github.alathra.horsecombat.updatechecker.UpdateHandler;
-import io.github.alathra.horsecombat.utility.Logger;
-import io.github.milkdrinkers.colorparser.ColorParser;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
