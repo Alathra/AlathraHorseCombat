@@ -68,6 +68,7 @@ public class HorseCombatListener implements Listener {
             }
 
             // if the damaged entity is a player or vehicle (could be a horse)
+            // TODO: What if its a hostile mob?
             if (!(damagedEntity instanceof Player) && !(damagedEntity instanceof Horse)) return;
 
             // check for horse without player riding it
