@@ -1,7 +1,9 @@
 package io.github.alathra.horsecombat.listener;
 
 import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.utils.EntityTypeUtil;
 import io.github.alathra.horsecombat.AlathraHorseCombat;
 import io.github.alathra.horsecombat.config.Settings;
 import io.github.alathra.horsecombat.hook.Hook;
@@ -67,14 +69,14 @@ public class HorseCombatListener implements Listener {
                 if (!town.isPVP()) return;
             }
 
-            // if the damaged entity is a player or vehicle (could be a horse)
-            // TODO: What if its a hostile mob?
-            if (!(damagedEntity instanceof Player) && !(damagedEntity instanceof Horse)) return;
-
-            // check for horse without player riding it
             if (damagedEntity instanceof Horse horse) {
                 if (horse.getPassengers().isEmpty()) return;
+            }   // if the damaged entity is anything but a ridden horse
+            else {
+                if (EntityTypeUtil.isInstanceOfAny(TownySettings.getProtectedEntityTypes(), damagedEntity)) return;
             }
+
+
         }
 
         // TODO: add option to enable if can be used on offhand
