@@ -12,10 +12,7 @@ import io.github.alathra.horsecombat.utility.itemutil.ItemProvider;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -36,56 +33,55 @@ public class HorseCombatListener implements Listener {
     // Set to track entities currently being damaged to prevent infinite loops
     private final HashSet<UUID> entitiesBeingDamaged = new HashSet<>();
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
         // Skip if the event is already cancelled (e.g., by a claim plugin)
         if (event.isCancelled()) return;
 
         Entity damagingEntity = event.getDamager();
 
+
         // Skip if the attacker is not a player and initialize damagingEntity to damagingPlayer
         if (!(damagingEntity instanceof Player damagingPlayer)) return;
 
-        Entity targetEntity = event.getEntity();
-
+        Entity damagedEntity = event.getEntity();
+        
         // Skip if the target is not a living entity (we want to hit mobs and players)
-        if (!(targetEntity instanceof LivingEntity)) return;
+        if (!(damagedEntity instanceof LivingEntity)) return;
 
         // Get UUID for tracking damage processing
-        UUID targetUuid = targetEntity.getUniqueId();
+        UUID damagedUuid = damagedEntity.getUniqueId();
 
         // Check if we're already processing damage for this entity - prevents infinite loops
-        if (entitiesBeingDamaged.contains(targetUuid)) return;
+        if (entitiesBeingDamaged.contains(damagedUuid)) return;
 
         // Check for Towny bypass - add this check
-        if (Hook.getTownyHook().isHookLoaded() && !damagingEntity.hasPermission(townyBypassPermission) && Settings.isTownyConfigEnabled()) {
+        if (Hook.Towny.isLoaded() && !damagingEntity.hasPermission(townyBypassPermission) && Settings.isTownyConfigEnabled()) {
             TownyAPI townyAPI = Hook.getTownyHook().getTownyAPI();
 
-            TownBlock townBlockPlayerIsIn = townyAPI.getTownBlock(damagingPlayer);
-            if (townBlockPlayerIsIn == null) return;
+          
 
-            Town townPlayerIsIn = townyAPI.getTownOrNull(townBlockPlayerIsIn);
-            if (townPlayerIsIn == null) return;
+         Town town = townyAPI.getTown(damagedEntity.getLocation());
 
-            // If target is in a town and there's no war
-            if (!townPlayerIsIn.hasActiveWar()) {
-                // If attacker is not the resident of that town
-                if (!townPlayerIsIn.hasResident(damagingPlayer)) {
-                    if (!townPlayerIsIn.isPVP()) {
-                        // Check if mob protection is enabled
-                        boolean isProtectMobsEnabled = Settings.isProtectMobsEnabled(); // default true
 
-                        // If target is a player OR (target is a mob AND we protect mobs)
-                        if (targetEntity instanceof Player || isProtectMobsEnabled) {
-                            // Debug message
-                            if (plugin.isDebugEnabled()) {
-                                plugin.getLogger().info("Blocking attack: target=" + targetEntity.getType() + ", protectMobs=" + isProtectMobsEnabled);
-                            }
+            // If attacker is not the resident of that town
+            Town townPlayerIsIn;
+            if (!townPlayerIsIn.hasResident(damagingPlayer)) {
+                if (!townPlayerIsIn.isPVP()) {
+                    // Check if mob protection is enabled
+                    boolean isProtectMobsEnabled = false; // default set to false
 
-                            damagingPlayer.sendMessage(ColorParser.of("<dark_gray>[<dark_red>AlathraHorseCombat<dark_gray>] <red>You cannot attack in this town!").build());
-                            event.setCancelled(true);
-                            return;
+                    // If target is a player/horse OR (target is a mob AND we protect mobs)
+                    if (damagedEntity instanceof Player || damagedEntity instanceof Vehicle) return;
+                    {
+                        // Debug message
+                        if (plugin.isDebugEnabled()) {
+                            plugin.getLogger().info("Blocking attack: target=" + damagedEntity.getType() + ", protectMobs=" + isProtectMobsEnabled);
                         }
+
+                        damagedEntity.sendMessage(ColorParser.of("<dark_gray>[<dark_red>AlathraHorseCombat<dark_gray>] <red>You cannot attack in this town!").build());
+                        event.setCancelled(true);
+                        return;
                     }
                 }
             }
@@ -103,7 +99,7 @@ public class HorseCombatListener implements Listener {
 
         try {
             // Add to processing set to prevent recursion
-            entitiesBeingDamaged.add(targetUuid);
+            entitiesBeingDamaged.add(damagedUuid);
 
             if (damagingPlayer.getVehicle() instanceof Horse) {
                 // Attacker is on a horse
@@ -111,7 +107,7 @@ public class HorseCombatListener implements Listener {
                 double originalDamage = event.getDamage();
                 double mobDamageMultiplier = 1.0;
 
-                if (!(targetEntity instanceof Player)) {
+                if (!(damagedEntity instanceof Player)) {
                     mobDamageMultiplier = Settings.getMobDamageMultiplier(); // default 1.5
                 }
 
@@ -121,32 +117,32 @@ public class HorseCombatListener implements Listener {
                 double damage = baseDamage * mobDamageMultiplier;
 
                 // Apply damage directly without causing another event
-                ((LivingEntity) targetEntity).damage(damage);
+                ((LivingEntity) damagedEntity).damage(damage);
 
                 // Only for debug - can be disabled in production
                 if (plugin.isDebugEnabled()) {
-                    plugin.getLogger().info("Entity hit with momentum: " + momentum + ", damage: " + damage + ", entity type: " + targetEntity.getType());
+                    plugin.getLogger().info("Entity hit with momentum: " + momentum + ", damage: " + damage + ", entity type: " + damagedEntity.getType());
                 }
 
                 // Handle knockoff for riders based on momentum thresholds
                 int knockoffThreshold = Settings.getKnockoffThreshold(); // default is 50
 
-                if (momentum >= knockoffThreshold && targetEntity.getVehicle() != null) {
+                if (momentum >= knockoffThreshold && damagedEntity.getVehicle() != null) {
                     if (Settings.getKnockoffChance() > Math.random()) {
                         // Add delay before ejecting to avoid damage cancellation
                         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                            if (targetEntity.isValid() && targetEntity.getVehicle() != null) {
-                                targetEntity.getVehicle().eject();
+                            if (damagedEntity.isValid() && damagedEntity.getVehicle() != null) {
+                                damagedEntity.getVehicle().eject();
                             }
                         }, 2L); // 2 tick delay (0.1 seconds)
                     }
                 }
 
                 // Apply knockback to mobs (not for players, as it can be annoying in PvP)
-                if (!(targetEntity instanceof Player) && momentum >= 25) {
+                if (!(damagedEntity instanceof Player) && momentum >= 25) {
                     double knockbackStrength = momentum / 50.0; // 0.5 to 2.0 based on momentum
-                    var direction = targetEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
-                    targetEntity.setVelocity(direction.multiply(knockbackStrength));
+                    var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
+                    damagedEntity.setVelocity(direction.multiply(knockbackStrength));
                 }
 
                 // Use only sounds based on momentum levels - no heavy particles or entities
@@ -163,19 +159,19 @@ public class HorseCombatListener implements Listener {
                 // Attacker is on foot
                 double footDamage;
 
-                if (targetEntity instanceof Player) {
+                if (damagedEntity instanceof Player) {
                     footDamage = Settings.getFootDamage(); // default is 0.5
                 } else {
                     // Different damage for mobs when on foot
                     footDamage = Settings.getFootDamageMobs(); // default is 1.0
                 }
 
-                ((LivingEntity) targetEntity).damage(event.getDamage() * footDamage); // Apply configurable damage
+                ((LivingEntity) damagedEntity).damage(event.getDamage() * footDamage); // Apply configurable damage
             }
 
         } finally {
             // Always remove from processing set when done
-            entitiesBeingDamaged.remove(targetUuid);
+            entitiesBeingDamaged.remove(damagedUuid);
         }
     }
 
