@@ -2,7 +2,6 @@ package io.github.alathra.horsecombat.listener;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.object.TownBlock;
 import io.github.alathra.horsecombat.AlathraHorseCombat;
 import io.github.alathra.horsecombat.config.Settings;
 import io.github.alathra.horsecombat.hook.Hook;
@@ -40,12 +39,11 @@ public class HorseCombatListener implements Listener {
 
         Entity damagingEntity = event.getDamager();
 
-
         // Skip if the attacker is not a player and initialize damagingEntity to damagingPlayer
         if (!(damagingEntity instanceof Player damagingPlayer)) return;
 
         Entity damagedEntity = event.getEntity();
-        
+
         // Skip if the target is not a living entity (we want to hit mobs and players)
         if (!(damagedEntity instanceof LivingEntity)) return;
 
@@ -57,122 +55,98 @@ public class HorseCombatListener implements Listener {
 
         // Check for Towny bypass - add this check
         if (Hook.Towny.isLoaded() && !damagingEntity.hasPermission(townyBypassPermission) && Settings.isTownyConfigEnabled()) {
+            // Get Towny API
             TownyAPI townyAPI = Hook.getTownyHook().getTownyAPI();
+            // Get town of entity being damaged, if exists
+            Town town = townyAPI.getTown(damagedEntity.getLocation());
+            // Town exists
+            if (town != null) {
+                // Player is attacking an entity in their own town
+                if (town.hasResident(damagingPlayer)) return;
+                // Town down not have pvp, so we should disable horse combat damage
+                if (!town.isPVP()) return;
+            }
 
-          
+            // if the damaged entity is a player or vehicle (could be a horse)
+            if (!(damagedEntity instanceof Player) && !(damagedEntity instanceof Horse)) return;
 
-         Town town = townyAPI.getTown(damagedEntity.getLocation());
-
-
-            // If attacker is not the resident of that town
-            Town townPlayerIsIn;
-            if (!townPlayerIsIn.hasResident(damagingPlayer)) {
-                if (!townPlayerIsIn.isPVP()) {
-                    // Check if mob protection is enabled
-                    boolean isProtectMobsEnabled = false; // default set to false
-
-                    // If target is a player/horse OR (target is a mob AND we protect mobs)
-                    if (damagedEntity instanceof Player || damagedEntity instanceof Vehicle) return;
-                    {
-                        // Debug message
-                        if (plugin.isDebugEnabled()) {
-                            plugin.getLogger().info("Blocking attack: target=" + damagedEntity.getType() + ", protectMobs=" + isProtectMobsEnabled);
-                        }
-
-                        damagedEntity.sendMessage(ColorParser.of("<dark_gray>[<dark_red>AlathraHorseCombat<dark_gray>] <red>You cannot attack in this town!").build());
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
+            // check for horse without player riding it
+            if (damagedEntity instanceof Horse horse) {
+                if (horse.getPassengers().isEmpty()) return;
             }
         }
 
-        //TODO add option to enable if can be used on offhand
-        ItemStack lance = damagingPlayer.getInventory().getItemInMainHand();
-        String lanceItemId = ItemProvider.NEXO.parseItemID(lance);
+        // TODO: add option to enable if can be used on offhand
+        ItemStack mainHandItem = damagingPlayer.getInventory().getItemInMainHand();
 
-        // If item is not a nexo item or not included in the lance list in configs
+        // Check to see if the item the player is holding is a lancing item
+        String lanceItemId = ItemProvider.NEXO.parseItemID(mainHandItem);
         if (lanceItemId == null || !Settings.getLanceList().contains(lanceItemId)) return;
+
+        // --- ATTEMPT TO APPLY HORSE COMBAT MECHANICS ---
 
         // Cancel vanilla damage to prevent stacking
         event.setCancelled(true);
 
-        try {
-            // Add to processing set to prevent recursion
-            entitiesBeingDamaged.add(damagedUuid);
+        // Add to processing set to prevent recursion
+        entitiesBeingDamaged.add(damagedUuid);
 
-            if (damagingPlayer.getVehicle() instanceof Horse) {
-                // Attacker is on a horse
-                int momentum = MomentumUtils.getMomentum(damagingPlayer);
-                double originalDamage = event.getDamage();
-                double mobDamageMultiplier = 1.0;
+        // Attacker is on a horse
+        int momentum = MomentumUtils.getMomentum(damagingPlayer);
+        double originalDamage = event.getDamage();
 
-                if (!(damagedEntity instanceof Player)) {
-                    mobDamageMultiplier = Settings.getMobDamageMultiplier(); // default 1.5
-                }
-
-                double baseDamage = getBaseDamage(momentum, originalDamage);
-
-                // Apply the mob multiplier if target is not a player
-                double damage = baseDamage * mobDamageMultiplier;
-
-                // Apply damage directly without causing another event
-                ((LivingEntity) damagedEntity).damage(damage);
-
-                // Only for debug - can be disabled in production
-                if (plugin.isDebugEnabled()) {
-                    plugin.getLogger().info("Entity hit with momentum: " + momentum + ", damage: " + damage + ", entity type: " + damagedEntity.getType());
-                }
-
-                // Handle knockoff for riders based on momentum thresholds
-                int knockoffThreshold = Settings.getKnockoffThreshold(); // default is 50
-
-                if (momentum >= knockoffThreshold && damagedEntity.getVehicle() != null) {
-                    if (Settings.getKnockoffChance() > Math.random()) {
-                        // Add delay before ejecting to avoid damage cancellation
-                        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                            if (damagedEntity.isValid() && damagedEntity.getVehicle() != null) {
-                                damagedEntity.getVehicle().eject();
-                            }
-                        }, 2L); // 2 tick delay (0.1 seconds)
-                    }
-                }
-
-                // Apply knockback to mobs (not for players, as it can be annoying in PvP)
-                if (!(damagedEntity instanceof Player) && momentum >= 25) {
-                    double knockbackStrength = momentum / 50.0; // 0.5 to 2.0 based on momentum
-                    var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
-                    damagedEntity.setVelocity(direction.multiply(knockbackStrength));
-                }
-
-                // Use only sounds based on momentum levels - no heavy particles or entities
-                playMomentumSounds(damagingPlayer, momentum);
-
-                // Reset momentum after attack
-                MomentumUtils.resetMomentum(damagingPlayer);
-
-                // Play "clink" sound when player registers a hit
-                if (Settings.isHitSoundEnabled())
-                    damagingPlayer.getWorld().playSound(Settings.getHitSound());
-
-            } else {
-                // Attacker is on foot
-                double footDamage;
-
-                if (damagedEntity instanceof Player) {
-                    footDamage = Settings.getFootDamage(); // default is 0.5
-                } else {
-                    // Different damage for mobs when on foot
-                    footDamage = Settings.getFootDamageMobs(); // default is 1.0
-                }
-
-                ((LivingEntity) damagedEntity).damage(event.getDamage() * footDamage); // Apply configurable damage
-            }
-
-        } finally {
-            // Always remove from processing set when done
-            entitiesBeingDamaged.remove(damagedUuid);
+        // Get damage multiplier
+        double damageMultiplier = Settings.getPlayerDamageMultiplier();
+        if (!(damagedEntity instanceof Player)) {
+            damageMultiplier = Settings.getMobDamageMultiplier();
         }
+
+        double baseDamage = getBaseDamage(momentum, originalDamage);
+
+        // Apply the mob multiplier if target is not a player
+        double damage = baseDamage * damageMultiplier;
+
+        // Apply damage directly without causing another event
+        ((LivingEntity) damagedEntity).damage(damage);
+
+        // Only for debug - can be disabled in production
+        if (plugin.isDebugEnabled()) {
+            plugin.getLogger().info("Entity hit with momentum: " + momentum + ", damage: " + damage + ", entity type: " + damagedEntity.getType());
+        }
+
+        // Handle knockoff for riders based on momentum thresholds
+        int knockoffThreshold = Settings.getKnockoffThreshold(); // default is 50
+
+        if (momentum >= knockoffThreshold && damagedEntity.getVehicle() != null) {
+            if (Settings.getKnockoffChance() > Math.random()) {
+                // Add delay before ejecting to avoid damage cancellation
+                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    if (damagedEntity.isValid() && damagedEntity.getVehicle() != null) {
+                        damagedEntity.getVehicle().eject();
+                    }
+                }, 2L); // 2 tick delay (0.1 seconds)
+            }
+        }
+
+        // Apply knockback to mobs (not for players, as it can be annoying in PvP)
+        if (!(damagedEntity instanceof Player) && momentum >= 25) {
+            double knockbackStrength = momentum / 50.0; // 0.5 to 2.0 based on momentum
+            var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
+            damagedEntity.setVelocity(direction.multiply(knockbackStrength));
+        }
+
+        // Use only sounds based on momentum levels - no heavy particles or entities
+        playMomentumSounds(damagingPlayer, momentum);
+
+        // Reset momentum after attack
+        MomentumUtils.resetMomentum(damagingPlayer);
+
+        // Play "clink" sound when player registers a hit
+        if (Settings.isHitSoundEnabled() && momentum >= 25)
+            damagingPlayer.getWorld().playSound(Settings.getHitSound());
+
+        // Always remove from processing set when done
+        entitiesBeingDamaged.remove(damagedUuid);
     }
 
     @EventHandler

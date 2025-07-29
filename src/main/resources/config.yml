@@ -25,11 +25,10 @@ lance:
 
 # Combat Settings
 combat:
+  playerDamageMultiplier: 1.5
   mobDamageMultiplier: 1.5
   knockoffThreshold: 50
   knockoffChance: 0.2
-  footDamage: 1.0
-  footDamageMobs: 1.0
 
 sounds:
   hit:

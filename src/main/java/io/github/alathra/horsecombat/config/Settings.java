@@ -20,10 +20,6 @@ public class Settings {
         return plugin.getConfigHandler().getConfig().getOrDefault("towny.enabled", true);
     }
 
-    public static boolean isProtectMobsEnabled() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("towny.protectMobs", true);
-    }
-
     public static List<String> getLanceList() {
         return plugin.getConfigHandler().getConfig().getOrDefault("lance.itemIdList", List.of());
     }
@@ -33,20 +29,16 @@ public class Settings {
         return plugin.getConfigHandler().getConfig().getOrDefault("combat.mobDamageMultiplier", 1.5);
     }
 
+    public static double getPlayerDamageMultiplier() {
+        return plugin.getConfigHandler().getConfig().getOrDefault("combat.playerDamageMultiplier", 1.5);
+    }
+
     public static int getKnockoffThreshold() {
         return plugin.getConfigHandler().getConfig().getOrDefault("combat.knockoffThreshold", 50);
     }
 
     public static double getKnockoffChance() {
         return plugin.getConfigHandler().getConfig().getOrDefault("combat.knockoffChance", 0.33);
-    }
-
-    public static double getFootDamage() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("combat.footDamage", 0.5);
-    }
-
-    public static double getFootDamageMobs() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("combat.footDamageMobs", 1.0);
     }
 
     // Sound Configs
