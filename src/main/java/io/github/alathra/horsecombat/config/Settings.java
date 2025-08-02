@@ -2,10 +2,15 @@ package io.github.alathra.horsecombat.config;
 
 import io.github.alathra.horsecombat.AlathraHorseCombat;
 import io.github.alathra.horsecombat.utility.Cfg;
+import io.github.alathra.horsecombat.utility.Logger;
+import io.github.alathra.horsecombat.utility.itemutil.ItemProvider;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
+import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemStack;
 import org.intellij.lang.annotations.Subst;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Settings {
@@ -20,8 +25,22 @@ public class Settings {
         return plugin.getConfigHandler().getConfig().getOrDefault("towny.enabled", true);
     }
 
-    public static List<String> getLanceList() {
+    public static List<String> getLanceIDList() {
+        // TODO: populate vanilla ids here
         return plugin.getConfigHandler().getConfig().getOrDefault("lance.itemIdList", List.of());
+    }
+
+    public static ItemProvider getItemProvider() {
+        String itemProviderString = Cfg.get().getOrDefault("lance.itemProvider", "VANILLA");
+        if (itemProviderString.isBlank() || itemProviderString.isEmpty())
+            itemProviderString = "VANILLA";
+
+        try {
+            return ItemProvider.valueOf(itemProviderString);
+        } catch (IllegalStateException e) {
+            Logger.get().warn("Invalid 'ItemProvider' defined in config.yml. Defaulting to vanilla...");
+            return ItemProvider.VANILLA;
+        }
     }
 
     // Combat configs
@@ -107,19 +126,5 @@ public class Settings {
     // Display Settings
     public static String getActionBarFormat() {
         return plugin.getConfigHandler().getConfig().getOrDefault("display.actionBarFormat", "<aqua>Momentum: %momentum%/100");
-    }
-
-    // Visual Effects Settings
-    public static boolean shouldShowTurnEffects() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("effects.showTurnEffects", true);
-    }
-
-    public static boolean shouldShowStopEffects() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("effects.showStopEffects", true);
-    }
-
-    // Horse Spawning Settings
-    public static int getBonusHealth() {
-        return plugin.getConfigHandler().getConfig().getOrDefault("horseSpawning.bonusHealth", 20);
     }
 }

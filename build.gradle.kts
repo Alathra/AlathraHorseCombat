@@ -40,6 +40,7 @@ repositories {
     maven("https://repo.nexomc.com/releases") // Nexo
     maven("https://repo.oraxen.com/releases") // Oraxen
     maven("https://maven.devs.beer") // ItemsAdder API Dependency
+    maven("https://nexus.phoenixdevt.fr/repository/maven-public") // Phoenix Development (MMOItems)
 }
 
 dependencies {
@@ -77,6 +78,8 @@ dependencies {
     compileOnly(libs.nexo)
     compileOnly(libs.oraxen)
     compileOnly(libs.itemsadder)
+    compileOnly(libs.mmoitems)
+    compileOnly(libs.mythiclib)
 }
 
 tasks {
@@ -178,7 +181,7 @@ bukkit { // Options: https://github.com/Minecrell/plugin-yml#bukkit
     // Misc properties
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD // STARTUP or POSTWORLD
     depend = listOf()
-    softDepend = listOf("Vault", "PlaceholderAPI", "Nexo", "Oraxen", "ItemsAdder")
+    softDepend = listOf("Vault", "PlaceholderAPI", "Nexo", "Oraxen", "ItemsAdder", "MMOItems")
     loadBefore = listOf()
     provides = listOf()
 }

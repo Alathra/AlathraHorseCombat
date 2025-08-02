@@ -1,47 +1,42 @@
-# Update Checker Settings
-update-checker:
-  enable: false
-  console: false # Post message to console
-  op: false # Send update notification to opped players on join
-
-# Language, specify the language file to use, for example `en_US` which will load `/lang/en_US.json`
-language: "en_US"
-
-# Lance Settings
+# ----- LANCE ITEM SETTINGS -----
 lance:
-  itemIdList:
-    - "copper_lance"
+  # Options include: VANILLA, ITEMSADDER, ORAXEN, NEXO and MMOITEMS
+  # An item framework is recommended !!
+  itemProvider: "VANILLA"
+  # This only applies if the "itemProvider" is NOT "VANILLA", using an item plugin
+  itemPluginIDList:
     - "iron_lance"
     - "gold_lance"
-    - "steel_lance"
     - "diamond_lance"
     - "netherite_lance"
-    - "copper_pike"
-    - "iron_pike"
-    - "gold_pike"
-    - "steel_pike"
-    - "diamond_pike"
-    - "netherite_pike"
+  # This only applies if the "itemProvider" is not set to "VANILLA"
+  defaultLanceItems:
+    - name: "iron_lance"
+      material: IRON_SWORD
+      customModelData: 8693
+      displayName: "<gray><b>Iron Lance"
+      lore:
+        - "<yellow>A special weapon used in horse combat"
+    - name: "gold_lance"
+      material: GOLDEN_SWORD
+      customModelData: 8694
+      displayName: "<yellow><b>Golden Lance"
+      lore:
+        - "<yellow>A special weapon used in horse combat"
+    - name: "gold_lance"
+      material: DIAMOND_SWORD
+      customModelData: 8695
+      displayName: "<dark_aqua><b>Diamond Lance"
+      lore:
+        - "<yellow>A special weapon used in horse combat"
+    - name: "netherite_lance"
+      material: NETHERITE_SWORD
+      customModelData: 8696
+      displayName: "<dark_gray><b>Netherite Lance"
+      lore:
+        - "<yellow>A special weapon used in horse combat"
 
-# Combat Settings
-combat:
-  playerDamageMultiplier: 1.5
-  mobDamageMultiplier: 1.5
-  knockoffThreshold: 50
-  knockoffChance: 0.2
-
-sounds:
-  hit:
-    enabled: true
-    effect: "minecraft:entity.zombie.attack_iron_door"
-    volume: 0.5
-    pitch: 1.0
-
-towny:
-  enabled: true
-  # Whether mobs in towns should be protected
-  protectMobs: true
-
+# ----- COMBAT SETTINGS -----
 momentum:
   movementThreshold: 1.25
   stallTimeMs: 500
@@ -56,11 +51,27 @@ momentum:
     momentum_25-49: 1
     momentum_0-24: 0.5
 
-# Display settings
+combat:
+  playerDamageMultiplier: 1.5
+  mobDamageMultiplier: 1.5
+  knockoffThreshold: 50
+  knockoffChance: 0.2
+
+# ----- SOUND SETTINGS -----
+sounds:
+  hit:
+    enabled: true
+    effect: "minecraft:entity.zombie.attack_iron_door"
+    volume: 0.5
+    pitch: 1.0
+
+# ----- DISPLAY SETTINGS -----
 display:
   actionBarFormat: "<aqua>Momentum: %momentum%/100"
 
-# Visual effects settings
-effects:
-  showTurnEffects: false     # Show particles and play sounds on turns
-  showStopEffects: false     # Show particles and play sounds when stopping
+# ----- HOOKS & COMPATIBILITY -----
+
+# This allows for compatibility with Towny
+# Enabling this prevents horse combat against mobs protected in Town claims
+towny:
+  enabled: true

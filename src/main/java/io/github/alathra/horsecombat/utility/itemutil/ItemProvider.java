@@ -3,6 +3,7 @@ package io.github.alathra.horsecombat.utility.itemutil;
 import com.nexomc.nexo.api.NexoItems;
 import dev.lone.itemsadder.api.CustomStack;
 import io.th0rgal.oraxen.api.OraxenItems;
+import net.Indyuce.mmoitems.MMOItems;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -21,6 +22,7 @@ public enum ItemProvider {
     ORAXEN("Oraxen", List.of("oraxen")),
     NEXO("Nexo", List.of("nexo", "oraxen")),
     ITEMSADDER("ItemsAdder", List.of("itemsadder")),
+    MMOITEMS("MMOItems", List.of("mmoitems")),
     VANILLA(List.of("minecraft")); // Order matters here! The order is important for iterating the enum.
 
     private final String pluginName;
@@ -128,6 +130,11 @@ public enum ItemProvider {
             case ORAXEN -> OraxenItems.getItemById(cleanItemId).build();
             case NEXO -> Objects.requireNonNull(NexoItems.itemFromId(cleanItemId)).build();
             case ITEMSADDER -> CustomStack.getInstance(cleanItemId).getItemStack();
+            case MMOITEMS -> {
+                if (cleanItemId == null || !cleanItemId.contains(".")) yield null;
+                String[] parts = cleanItemId.split("\\.", 2);
+                yield  MMOItems.plugin.getItem(parts[0], parts[1]);
+            }
         };
     }
 
@@ -156,6 +163,11 @@ public enum ItemProvider {
             case ITEMSADDER -> {
                 CustomStack customStack = CustomStack.byItemStack(item);
                 yield customStack != null ? customStack.getNamespacedID() : null;
+            }
+            case MMOITEMS -> {
+                String type = String.valueOf(MMOItems.getType(item));
+                String id = MMOItems.getID(item);
+                yield type != null && id != null ? type + id : null;
             }
         };
     }

@@ -15,7 +15,7 @@ public class ListenerHandler implements Reloadable {
     private final List<Listener> listeners = new ArrayList<>();
 
     /**
-     * Instantiates a the Listener handler.
+     * Instantiates the Listener handler.
      *
      * @param plugin the plugin instance
      */
@@ -32,7 +32,6 @@ public class ListenerHandler implements Reloadable {
         listeners.clear(); // Clear the list to avoid duplicate listeners when reloading the plugin
         listeners.add(new HorseCombatListener());
         listeners.add(new HorseDismountListener());
-        listeners.add(new HorseSpawnListener());
 
         // Register listeners here
         for (Listener listener : listeners) {

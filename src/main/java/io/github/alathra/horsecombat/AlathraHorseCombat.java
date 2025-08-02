@@ -4,11 +4,8 @@ import io.github.alathra.horsecombat.command.CommandHandler;
 import io.github.alathra.horsecombat.config.ConfigHandler;
 import io.github.alathra.horsecombat.config.Settings;
 import io.github.alathra.horsecombat.hook.HookManager;
-import io.github.alathra.horsecombat.listener.HorseCombatListener;
 import io.github.alathra.horsecombat.listener.ListenerHandler;
 import io.github.alathra.horsecombat.threadutil.SchedulerHandler;
-import io.github.alathra.horsecombat.translation.TranslationHandler;
-import io.github.alathra.horsecombat.updatechecker.UpdateHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,11 +20,9 @@ public class AlathraHorseCombat extends JavaPlugin {
 
     // Handlers/Managers
     private ConfigHandler configHandler;
-    private TranslationHandler translationHandler;
     private HookManager hookManager;
     private CommandHandler commandHandler;
     private ListenerHandler listenerHandler;
-    private UpdateHandler updateHandler;
     private SchedulerHandler schedulerHandler;
 
     // Debug flag for more verbose logging
@@ -50,20 +45,16 @@ public class AlathraHorseCombat extends JavaPlugin {
         instance = this;
 
         configHandler = new ConfigHandler(this);
-        translationHandler = new TranslationHandler(configHandler);
         hookManager = new HookManager(this);
         commandHandler = new CommandHandler(this);
         listenerHandler = new ListenerHandler(this);
-        updateHandler = new UpdateHandler(this);
         schedulerHandler = new SchedulerHandler();
 
         handlers = List.of(
             configHandler,
-            translationHandler,
             hookManager,
             commandHandler,
             listenerHandler,
-            updateHandler,
             schedulerHandler
         );
 
@@ -118,16 +109,6 @@ public class AlathraHorseCombat extends JavaPlugin {
     @NotNull
     public HookManager getHookManager() {
         return hookManager;
-    }
-
-    /**
-     * Gets update handler.
-     *
-     * @return the update handler
-     */
-    @NotNull
-    public UpdateHandler getUpdateHandler() {
-        return updateHandler;
     }
 
     /**

@@ -9,7 +9,6 @@ import io.github.alathra.horsecombat.config.Settings;
 import io.github.alathra.horsecombat.hook.Hook;
 import io.github.alathra.horsecombat.utility.coreutil.HorseState;
 import io.github.alathra.horsecombat.utility.coreutil.MomentumUtils;
-import io.github.alathra.horsecombat.utility.itemutil.ItemProvider;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -75,16 +74,14 @@ public class HorseCombatListener implements Listener {
             else {
                 if (EntityTypeUtil.isInstanceOfAny(TownySettings.getProtectedEntityTypes(), damagedEntity)) return;
             }
-
-
         }
 
         // TODO: add option to enable if can be used on offhand
         ItemStack mainHandItem = damagingPlayer.getInventory().getItemInMainHand();
 
         // Check to see if the item the player is holding is a lancing item
-        String lanceItemId = ItemProvider.NEXO.parseItemID(mainHandItem);
-        if (lanceItemId == null || !Settings.getLanceList().contains(lanceItemId)) return;
+        String lanceItemId = Settings.getItemProvider().parseItemID(mainHandItem);
+        if (lanceItemId == null || !Settings.getLanceIDList().contains(lanceItemId)) return;
 
         // --- ATTEMPT TO APPLY HORSE COMBAT MECHANICS ---
 
@@ -187,11 +184,6 @@ public class HorseCombatListener implements Listener {
 
                     updateMomentumBar(player);
 
-                    // Use only sound feedback for stopping - minimal particles
-                    if (Settings.shouldShowStopEffects()) { // default true
-                        player.getWorld().playSound(currentLocation, Sound.ENTITY_HORSE_BREATHE, 0.5f, 0.8f);
-                    }
-
                     if (plugin.isDebugEnabled() && MomentumUtils.getMomentum(player) % 10 == 0) {
                         plugin.getLogger().info("Player ${player.name} momentum decaying: ${MomentumUtils.getMomentum(player)}");
                     }
@@ -206,11 +198,6 @@ public class HorseCombatListener implements Listener {
                     int momentumLoss = Settings.getTurnLoss(); // default is 10
                     MomentumUtils.reduceMomentum(player, momentumLoss);
                     updateMomentumBar(player);
-
-                    // Just use sound feedback for turns - no particles
-                    if (Settings.shouldShowTurnEffects()) { // default is true
-                        player.getWorld().playSound(currentLocation, Sound.ENTITY_HORSE_BREATHE, 1f, 1f);
-                    }
 
                     if (plugin.isDebugEnabled()) {
                         plugin.getLogger().info("Player ${player.name} turning: momentum ${MomentumUtils.getMomentum(player)}");

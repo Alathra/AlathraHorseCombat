@@ -3,6 +3,8 @@ package io.github.alathra.horsecombat.config;
 import io.github.alathra.horsecombat.AlathraHorseCombat;
 import io.github.alathra.horsecombat.Reloadable;
 import io.github.milkdrinkers.crate.Config;
+import io.github.milkdrinkers.crate.ConfigBuilder;
+import io.github.milkdrinkers.crate.internal.settings.ReloadSetting;
 
 /**
  * A class that generates/loads {@literal &} provides access to a configuration file.
@@ -22,7 +24,11 @@ public class ConfigHandler implements Reloadable {
 
     @Override
     public void onLoad(AlathraHorseCombat plugin) {
-        cfg = new Config("config", plugin.getDataFolder().getPath(), plugin.getResource("config.yml")); // Create a config file from the template in our resources folder
+        cfg = ConfigBuilder
+            .fromPath("config", plugin.getDataFolder().getPath())
+            .addInputStream(plugin.getResource("config.yml"))
+            .setReloadSetting(ReloadSetting.MANUALLY)
+            .create();
     }
 
     @Override
@@ -31,6 +37,10 @@ public class ConfigHandler implements Reloadable {
 
     @Override
     public void onDisable(AlathraHorseCombat plugin) {
+    }
+
+    public void reloadConfig() {
+        cfg.forceReload();
     }
 
     /**
