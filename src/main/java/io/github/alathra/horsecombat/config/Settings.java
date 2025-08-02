@@ -4,17 +4,24 @@ import io.github.alathra.horsecombat.AlathraHorseCombat;
 import io.github.alathra.horsecombat.utility.Cfg;
 import io.github.alathra.horsecombat.utility.Logger;
 import io.github.alathra.horsecombat.utility.itemutil.ItemProvider;
+import io.github.milkdrinkers.colorparser.ColorParser;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import org.bukkit.entity.Item;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.intellij.lang.annotations.Subst;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Settings {
-    public static AlathraHorseCombat plugin;
+    private static AlathraHorseCombat plugin;
+    private static final HashMap<String, ItemStack> vanillaLanceMap = new HashMap<String, ItemStack>();
 
     public static void init(AlathraHorseCombat plugin) {
         Settings.plugin = plugin;
@@ -26,8 +33,54 @@ public class Settings {
     }
 
     public static List<String> getLanceIDList() {
-        // TODO: populate vanilla ids here
-        return plugin.getConfigHandler().getConfig().getOrDefault("lance.itemIdList", List.of());
+        if (Settings.getItemProvider() == ItemProvider.VANILLA) {
+            return vanillaLanceMap.keySet().stream().toList();
+        } else {
+            return plugin.getConfigHandler().getConfig().getOrDefault("lance.itemPluginIDList", List.of());
+        }
+    }
+
+    public static void setVanillaLanceMap() {
+        vanillaLanceMap.clear();
+
+        // Return an empty map if not using vanilla item provider
+        if (Settings.getItemProvider() != ItemProvider.VANILLA) return;
+
+        // This should return a List of Maps, not a Map itself
+        List<Map<String, Object>> vanillaLanceList = (List<Map<String, Object>>) Cfg.get().get("lance.defaultLanceItems");
+        if (vanillaLanceList == null) return; // return empty map if config missing
+        for (Map<String, Object> itemData : vanillaLanceList) {
+            String name = (String) itemData.get("name");
+            String materialName = (String) itemData.get("material");
+            Material material = Material.matchMaterial(materialName);
+            // Check for valid material
+            if (material == null) {
+                Logger.get().warn("Invalid material: " + materialName + " for lance item " + name);
+                continue;
+            }
+            int customModelData = (int) itemData.get("customModelData");
+            String displayName = (String) itemData.get("displayName");
+            List<String> rawLoreList = (List<String>) itemData.get("lore");
+            List<Component> loreList = new ArrayList<>();
+            for (String rawLoreLine : rawLoreList) {
+                loreList.add(ColorParser.of(rawLoreLine).build().decoration(TextDecoration.ITALIC, false));
+            }
+
+            // Build item
+            ItemStack item = new ItemStack(material);
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                meta.setCustomModelData(customModelData);
+                meta.displayName(ColorParser.of(displayName).build().decoration(TextDecoration.ITALIC, false));
+                meta.lore(loreList);
+                item.setItemMeta(meta);
+            }
+            vanillaLanceMap.put(name, item);
+        }
+    }
+
+    public static Map<String, ItemStack> getVanillaLanceMap() {
+        return vanillaLanceMap;
     }
 
     public static ItemProvider getItemProvider() {

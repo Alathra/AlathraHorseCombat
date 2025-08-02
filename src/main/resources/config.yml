@@ -1,15 +1,15 @@
 # ----- LANCE ITEM SETTINGS -----
 lance:
   # Options include: VANILLA, ITEMSADDER, ORAXEN, NEXO and MMOITEMS
-  # An item framework is recommended !!
+  # An item provider plugin is recommended such as Nexo !!
   itemProvider: "VANILLA"
-  # This only applies if the "itemProvider" is NOT "VANILLA", using an item plugin
+  # This section only applies if the "itemProvider" is NOT "VANILLA", using an item plugin
   itemPluginIDList:
     - "iron_lance"
     - "gold_lance"
     - "diamond_lance"
     - "netherite_lance"
-  # This only applies if the "itemProvider" is not set to "VANILLA"
+  # This section only applies if the "itemProvider" is set to "VANILLA"
   defaultLanceItems:
     - name: "iron_lance"
       material: IRON_SWORD
@@ -23,7 +23,7 @@ lance:
       displayName: "<yellow><b>Golden Lance"
       lore:
         - "<yellow>A special weapon used in horse combat"
-    - name: "gold_lance"
+    - name: "diamond_lance"
       material: DIAMOND_SWORD
       customModelData: 8695
       displayName: "<dark_aqua><b>Diamond Lance"

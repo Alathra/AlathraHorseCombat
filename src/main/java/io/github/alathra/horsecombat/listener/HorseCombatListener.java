@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class HorseCombatListener implements Listener {
-    public static String townyBypassPermission = "horsecombat.admin.townybypass";
 
     AlathraHorseCombat plugin = AlathraHorseCombat.getInstance();
     private final HashMap<UUID, HorseState> horseStateMap = new HashMap<>();
@@ -55,7 +54,7 @@ public class HorseCombatListener implements Listener {
         if (entitiesBeingDamaged.contains(damagedUuid)) return;
 
         // Check for Towny bypass - add this check
-        if (Hook.Towny.isLoaded() && !damagingEntity.hasPermission(townyBypassPermission) && Settings.isTownyConfigEnabled()) {
+        if (Hook.Towny.isLoaded() && Settings.isTownyConfigEnabled()) {
             // Get Towny API
             TownyAPI townyAPI = Hook.getTownyHook().getTownyAPI();
             // Get town of entity being damaged, if exists

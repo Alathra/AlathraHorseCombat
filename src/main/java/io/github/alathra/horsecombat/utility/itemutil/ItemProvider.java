@@ -2,16 +2,16 @@ package io.github.alathra.horsecombat.utility.itemutil;
 
 import com.nexomc.nexo.api.NexoItems;
 import dev.lone.itemsadder.api.CustomStack;
+import io.github.alathra.horsecombat.config.Settings;
 import io.th0rgal.oraxen.api.OraxenItems;
 import net.Indyuce.mmoitems.MMOItems;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -116,24 +116,14 @@ public enum ItemProvider {
             return null;
 
         return switch (this) {
-            case VANILLA -> {
-                try {
-                    final @Nullable Material material = Material.matchMaterial(cleanItemId);
-                    if (material == null)
-                        yield null;
-
-                    yield ItemStack.of(material, 1);
-                } catch (IllegalArgumentException _ignored) {
-                    yield null;
-                }
-            }
+            case VANILLA -> Settings.getVanillaLanceMap().get(cleanItemId);
             case ORAXEN -> OraxenItems.getItemById(cleanItemId).build();
             case NEXO -> Objects.requireNonNull(NexoItems.itemFromId(cleanItemId)).build();
             case ITEMSADDER -> CustomStack.getInstance(cleanItemId).getItemStack();
             case MMOITEMS -> {
                 if (cleanItemId == null || !cleanItemId.contains(".")) yield null;
                 String[] parts = cleanItemId.split("\\.", 2);
-                yield  MMOItems.plugin.getItem(parts[0], parts[1]);
+                yield MMOItems.plugin.getItem(parts[0], parts[1]);
             }
         };
     }
@@ -150,12 +140,14 @@ public enum ItemProvider {
 
         return switch (this) {
             case VANILLA -> {
-                NamespacedKey key = Registry.MATERIAL.getKey(item.getType());
-
-                if (key != null) {
-                    yield key.asString();
+                for (Map.Entry<String, ItemStack> vanillaItemEntry : Settings.getVanillaLanceMap().entrySet()) {
+                    ItemStack lanceItem = vanillaItemEntry.getValue();
+                    if (lanceItem.getType() == item.getType()) {
+                        if (item.hasItemMeta() &&
+                            item.getItemMeta().getCustomModelDataComponent().equals(lanceItem.getItemMeta().getCustomModelDataComponent())
+                        ) yield vanillaItemEntry.getKey();
+                    }
                 }
-
                 yield null;
             }
             case ORAXEN -> OraxenItems.getIdByItem(item);
@@ -186,7 +178,7 @@ public enum ItemProvider {
 
         switch (this) {
             case VANILLA -> {
-                return Material.matchMaterial(cleanItemId) != null;
+                return Settings.getVanillaLanceMap().containsKey(itemId);
             }
             case ORAXEN -> {
                 return OraxenItems.exists(cleanItemId);
@@ -204,5 +196,22 @@ public enum ItemProvider {
 
     private boolean isVanilla() {
         return this == VANILLA;
+    }
+
+    public List<ItemStack> getAllItems() {
+        switch (this) {
+            case VANILLA -> {
+                return Settings.getVanillaLanceMap().values().stream().toList();
+            }
+            case ORAXEN, NEXO, ITEMSADDER -> {
+                List<ItemStack> lances = new ArrayList<>();
+                for (String itemId : Settings.getLanceIDList()) {
+                    ItemStack item = parseItem(itemId);
+                    if (item != null) lances.add(item);
+                }
+                return lances;
+            }
+        }
+        return List.of();
     }
 }
