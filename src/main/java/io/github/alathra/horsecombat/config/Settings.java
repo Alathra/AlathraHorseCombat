@@ -10,6 +10,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.intellij.lang.annotations.Subst;
@@ -179,5 +180,29 @@ public class Settings {
     // Display Settings
     public static String getActionBarFormat() {
         return plugin.getConfigHandler().getConfig().getOrDefault("display.actionBarFormat", "<aqua>Momentum: %momentum%/100");
+    }
+
+    // Particle Settings
+
+    public static boolean areParticlesEnabled() {
+        return Cfg.get().getOrDefault("particles.hit.enabled", true);
+    }
+
+    public static Particle getParticleType() {
+        String rawParticleType = Cfg.get().getOrDefault("particles.hit.type", "CRIT");
+        try {
+            return Particle.valueOf(rawParticleType);
+        } catch(IllegalArgumentException e) {
+            Logger.get().warn("Invalid Particle type: " + rawParticleType + ". Defaulting to 'CRIT'");
+            return Particle.CRIT;
+        }
+    }
+
+    public static int getParticleAmount() {
+        return Cfg.get().getOrDefault("particles.hit.amount", 20);
+    }
+
+    public static float getParticleSpread() {
+        return Cfg.get().getOrDefault("particles.hit.spread", 1.0).floatValue();
     }
 }

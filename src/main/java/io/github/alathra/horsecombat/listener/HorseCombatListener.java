@@ -45,7 +45,7 @@ public class HorseCombatListener implements Listener {
         Entity damagedEntity = event.getEntity();
 
         // Skip if the target is not a living entity (we want to hit mobs and players)
-        if (!(damagedEntity instanceof LivingEntity)) return;
+        if (!(damagedEntity instanceof LivingEntity livingEntity)) return;
 
         // Get UUID for tracking damage processing
         UUID damagedUuid = damagedEntity.getUniqueId();
@@ -106,7 +106,7 @@ public class HorseCombatListener implements Listener {
         double damage = baseDamage * damageMultiplier;
 
         // Apply damage directly without causing another event
-        ((Enemy) damagedEntity).damage(damage);
+        livingEntity.damage(damage);
 
         // Only for debug - can be disabled in production
         if (plugin.isDebugEnabled()) {
@@ -143,6 +143,9 @@ public class HorseCombatListener implements Listener {
         // Play "clink" sound when player registers a hit
         if (Settings.isHitSoundEnabled() && momentum >= 25)
             damagingPlayer.getWorld().playSound(Settings.getHitSound());
+
+        if (Settings.areParticlesEnabled())
+            damagingPlayer.getWorld().spawnParticle(Settings.getParticleType(), damagedEntity.getLocation().add(0.0, 1.0, 0.0), Settings.getParticleAmount(), Settings.getParticleSpread(), Settings.getParticleSpread(), Settings.getParticleSpread());
 
         // Always remove from processing set when done
         entitiesBeingDamaged.remove(damagedUuid);

@@ -24,6 +24,8 @@ lance:
       lore:
         - "<yellow>A special weapon used in horse combat"
     - name: "diamond_lance"
+      material: DIAMOND_SWORD
+      customModelData: 8695
       displayName: "<dark_aqua><b>Diamond Lance"
       lore:
         - "<yellow>A special weapon used in horse combat"
@@ -35,6 +37,12 @@ lance:
         - "<yellow>A special weapon used in horse combat"
 
 # ----- COMBAT SETTINGS -----
+combat:
+  playerDamageMultiplier: 1.5
+  mobDamageMultiplier: 1.5
+  knockoffThreshold: 50
+  knockoffChance: 0.2
+
 momentum:
   movementThreshold: 1.25
   stallTimeMs: 500
@@ -49,12 +57,6 @@ momentum:
     momentum_25-49: 1
     momentum_0-24: 0.5
 
-combat:
-  playerDamageMultiplier: 1.5
-  mobDamageMultiplier: 1.5
-  knockoffThreshold: 50
-  knockoffChance: 0.2
-
 # ----- SOUND SETTINGS -----
 sounds:
   hit:
@@ -62,6 +64,14 @@ sounds:
     effect: "minecraft:entity.zombie.attack_iron_door"
     volume: 0.5
     pitch: 1.0
+
+# ----- PARTICLE SETTINGS -----
+particles:
+  hit:
+    enabled: true
+    type: CRIT
+    amount: 20
+    spread: 1.0
 
 # ----- DISPLAY SETTINGS -----
 display:
