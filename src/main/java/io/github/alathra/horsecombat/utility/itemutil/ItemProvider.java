@@ -157,9 +157,9 @@ public enum ItemProvider {
                 yield customStack != null ? customStack.getNamespacedID() : null;
             }
             case MMOITEMS -> {
-                String type = String.valueOf(MMOItems.getType(item));
+                String type = String.valueOf(MMOItems.getTypeName(item));
                 String id = MMOItems.getID(item);
-                yield type != null && id != null ? type + id : null;
+                yield type != null && id != null ? type + "." + id : null;
             }
         };
     }
