@@ -107,7 +107,7 @@ public class HorseCombatListener implements Listener {
         double damage = baseDamage * damageMultiplier;
 
         // Apply damage directly without causing another event
-        ((LivingEntity) damagedEntity).damage(damage);
+        ((Enemy) damagedEntity).damage(damage);
 
         // Only for debug - can be disabled in production
         if (plugin.isDebugEnabled()) {
