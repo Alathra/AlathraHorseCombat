@@ -5,6 +5,7 @@ import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.alathra.horsecombat.AlathraHorseCombat;
 import io.github.alathra.horsecombat.config.Settings;
 import io.github.alathra.horsecombat.utility.Permissions;
+import io.github.alathra.horsecombat.utility.itemutil.ItemProvider;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -42,7 +43,8 @@ public class AlathraHorseCombatCommand {
         return new CommandAPICommand("getlances")
             .withPermission(Permissions.getAdminPermissionNode())
             .executesPlayer((Player sender, CommandArguments args) -> {
-                for (ItemStack lanceItem : Settings.getItemProvider().getAllItems()) {
+                ItemProvider itemProvider = Settings.getItemProvider();
+                for (ItemStack lanceItem : itemProvider.getAllItems()) {
                     sender.getInventory().addItem(lanceItem);
                 }
                 sender.sendMessage(ColorParser.of("<yellow>Given all lance items").build());

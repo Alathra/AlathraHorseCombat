@@ -189,6 +189,11 @@ public enum ItemProvider {
             case ITEMSADDER -> {
                 return CustomStack.getInstance(cleanItemId) != null;
             }
+            case MMOITEMS -> {
+                if (cleanItemId == null || !cleanItemId.contains(".")) return false;
+                String[] parts = cleanItemId.split("\\.", 2);
+                return MMOItems.plugin.getItem(parts[0].toUpperCase(), parts[1]) != null;
+            }
         }
 
         return false;
@@ -203,7 +208,7 @@ public enum ItemProvider {
             case VANILLA -> {
                 return Settings.getVanillaLanceMap().values().stream().toList();
             }
-            case ORAXEN, NEXO, ITEMSADDER -> {
+            case ORAXEN, NEXO, ITEMSADDER, MMOITEMS -> {
                 List<ItemStack> lances = new ArrayList<>();
                 for (String itemId : Settings.getLanceIDList()) {
                     ItemStack item = parseItem(itemId);

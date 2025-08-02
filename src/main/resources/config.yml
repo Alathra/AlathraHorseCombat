@@ -24,8 +24,6 @@ lance:
       lore:
         - "<yellow>A special weapon used in horse combat"
     - name: "diamond_lance"
-      material: DIAMOND_SWORD
-      customModelData: 8695
       displayName: "<dark_aqua><b>Diamond Lance"
       lore:
         - "<yellow>A special weapon used in horse combat"
