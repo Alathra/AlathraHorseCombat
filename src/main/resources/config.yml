@@ -1,5 +1,5 @@
 # ----- LANCE ITEM SETTINGS -----
-lance:
+lances:
   # Options include: VANILLA, ITEMSADDER, ORAXEN, NEXO and MMOITEMS
   # An item provider plugin is recommended such as Nexo !!
   itemProvider: "VANILLA"
@@ -10,7 +10,7 @@ lance:
     - "diamond_lance"
     - "netherite_lance"
   # This section only applies if the "itemProvider" is set to "VANILLA"
-  defaultLanceItems:
+  vanillaLanceItems:
     - name: "iron_lance"
       material: IRON_SWORD
       customModelData: 8693
@@ -38,19 +38,40 @@ lance:
 
 # ----- COMBAT SETTINGS -----
 combat:
-  playerDamageMultiplier: 1.5
-  mobDamageMultiplier: 1.5
+  # A global damage multiplier when a lance strike (hit) is delivered to a player
+  # !! This will multiply the damage from the momentum damage multiplier !!
+  playerDamageMultiplier: 1.0
+  # A global damage multiplier when a lance strike (hit) is delivered to mob (non-player)
+  # !! This will multiply the damage from the momentum damage multiplier !!
+  mobDamageMultiplier: 1.0
+  # The minimum momentum needed to knock another player off their horse with a lance strike (hit)
   knockoffThreshold: 50
+  # The percentage chance that a lance hit will knock another player off their horse if the knockoffThreshold is exceeded
+  # Set this to 0.0 to disable this feature
   knockoffChance: 0.2
+  # If the lance strike (hit) can deliver a knockback effect to players, proportional to momentum
+  knockbackPlayers: true
+  # If the lance strike (hit) can deliver a knockback effect to mobs (non-players), proportional to momentum
+  knockbackMobs: true
+  # The minimum momentum needed to deliver a knockback effect with a lance strike (hit)
+  knockbackThreshold: 25
 
 momentum:
-  movementThreshold: 1.25
-  stallTimeMs: 500
+  # How much momentum is gained when the horse is not considered to be turning or stalling, per player move event fired
+  baseGain: 2
+  # The distance (blocks traveled) that the horse must exceed within stallTimeSeconds, else it is to be considered stalling
+  # Once a horse is considered stalling it will experience momentum decay
+  stallCancelDistance: 1.25
+  # The time in seconds used in conjunction with stallCancelDistance to determine if a horse is stalling
+  stallTimeSeconds: 0.5
+  # The maximum rate of decay of momentum as a result of turning or stalling
   maxDecayRate: 20
-  turnThreshold: 50.0
+  # The minimum change in yaw (degrees) when the horse is changing direction for it to be considered a turn
+  turnMinDegrees: 50.0
+  # How much momentum is lost when a turn occurs
   turnLoss: 15.0
-  straightGain: 2
-  momentumDamageMultiplier:
+  # The outgoing damage multiplier based on the current momentum
+  damageMultipliers:
     momentum_100: 2.5
     momentum_75-99: 2
     momentum_50-74: 1.5
@@ -59,19 +80,31 @@ momentum:
 
 # ----- SOUND SETTINGS -----
 sounds:
+  # Played when a player strikes an entity with a lance
   hit:
     enabled: true
+    # List of sound effects: https://www.digminecraft.com/lists/sound_list_pc.php
     effect: "minecraft:entity.zombie.attack_iron_door"
     volume: 0.5
     pitch: 1.0
+    # How far the sound can be heard
+    range: 32
+    # The minimum momentum required to produce the sound
+    mimMomentum: 25
 
 # ----- PARTICLE SETTINGS -----
 particles:
+  # Created when a player strikes an entity with a lance
   hit:
     enabled: true
+    # List of particle types: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
     type: CRIT
+    # The amount of particles that will spawn
     amount: 20
+    # The radius of the particle spread
     spread: 1.0
+    # The minimum momentum required to produce the particles
+    mimMomentum: 25
 
 # ----- DISPLAY SETTINGS -----
 display:
