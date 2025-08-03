@@ -64,14 +64,13 @@ public class HorseCombatListener implements Listener {
                 // Player is attacking an entity in their own town
                 if (town.hasResident(damagingPlayer)) return;
                 // Town down not have pvp, so we should disable horse combat damage
-                if (!town.isPVP()) return;
-            }
-
-            if (damagedEntity instanceof Horse horse) {
-                if (horse.getPassengers().isEmpty()) return;
-            }   // if the damaged entity is anything but a ridden horse
-            else {
-                if (EntityTypeUtil.isInstanceOfAny(TownySettings.getProtectedEntityTypes(), damagedEntity)) return;
+                if (!town.isPVP() && damagedEntity instanceof Player) return;
+                if (damagedEntity instanceof Horse horse) {
+                    if (horse.getPassengers().isEmpty()) return;
+                }   // if the damaged entity is anything but a ridden horse
+                else {
+                    if (EntityTypeUtil.isInstanceOfAny(TownySettings.getProtectedEntityTypes(), damagedEntity)) return;
+                }
             }
         }
 
@@ -127,13 +126,13 @@ public class HorseCombatListener implements Listener {
         // Apply knockback if enabled
         if (damagedEntity instanceof Player) {
             if (Settings.isKnockbackPlayersEnabled() && momentum >= Settings.getKnockbackThreshold()) {
-                double knockbackStrength = (momentum / 2.0) * Settings.getKnockbackMultiplier(); // 0.5 to 2.0 based on momentum
+                double knockbackStrength = (momentum / 25.0) * Settings.getKnockbackMultiplier(); // 0.5 to 2.0 based on momentum
                 var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
                 damagedEntity.setVelocity(direction.multiply(knockbackStrength));
             }
         } else {
             if (Settings.isKnockbackMobsEnabled() && momentum >= Settings.getKnockbackThreshold()) {
-                double knockbackStrength = (momentum / 20.0) * Settings.getKnockbackMultiplier(); // 0.5 to 2.0 based on momentum
+                double knockbackStrength = (momentum / 25.0) * Settings.getKnockbackMultiplier(); // 0.5 to 2.0 based on momentum
                 var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
                 damagedEntity.setVelocity(direction.multiply(knockbackStrength));
             }
