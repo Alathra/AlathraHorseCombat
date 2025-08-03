@@ -12,7 +12,7 @@
 
 ## Description
 
-AlathraHorseCombat introduces enhanced horse combat, by introducing increased damage from specific weapons on horseback via momentum mechanics. Works with Towny. This plugin is heavily inspired by HorsecombatRevamped, with majority of the code only translated from kotlin to java, _[link to original work](https://github.com/SakyQr/HorsecombatRevamped/tree/main/src/main)_.
+AlathraHorseCombat is a modernized, highly configurable and Java-implemented fork of [HorseCombatRevamped](https://github.com/SakyQr/HorsecombatRevamped?tab=AGPL-3.0-1-ov-file) by [SakyQ](https://github.com/SakyQr). AlathraHorseCombat is ShermansWorld's take on horse combat mechanics that are designed for the [Alathra Minecraft Server](https://alathra.com/), now overhauled and generalized for public use. It adds configurable items referred to as "lances" that facilitate the horse combat system. When riding a horse and holding a lance item in their hand, a player is able to build up momentum and deliver a powerful strike to mobs and other players. This plugin is designed simmulate medieval-style cavalry charges and jousting as a standalone software. Capability is enhanced by adding support for widely used item framework plugins including [ItemsAdder](https://itemsadder.devs.beer/), [MMOItems](https://gitlab.com/phoenix-dvpmt/mmoitems/-/wikis/home) [Nexo](https://docs.nexomc.com/), and [Oraxen](https://oraxen.com/) for the registration of lance items.
 
 ---
 
