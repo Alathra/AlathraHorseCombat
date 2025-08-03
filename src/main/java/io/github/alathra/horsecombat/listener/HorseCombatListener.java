@@ -84,9 +84,6 @@ public class HorseCombatListener implements Listener {
 
         // --- ATTEMPT TO APPLY HORSE COMBAT MECHANICS ---
 
-        // Cancel vanilla damage to prevent stacking
-        event.setCancelled(true);
-
         // Add to processing set to prevent recursion
         entitiesBeingDamaged.add(damagedUuid);
 
@@ -105,8 +102,8 @@ public class HorseCombatListener implements Listener {
         // Apply the mob multiplier if target is not a player
         double damage = baseDamage * damageMultiplier;
 
-        // Apply damage directly without causing another event
-        livingEntity.damage(damage);
+        // Apply damage
+        event.setDamage(damage);
 
         // Only for debug - can be disabled in production
         if (plugin.isDebugEnabled()) {
@@ -130,22 +127,16 @@ public class HorseCombatListener implements Listener {
         // Apply knockback if enabled
         if (damagedEntity instanceof Player) {
             if (Settings.isKnockbackPlayersEnabled() && momentum >= Settings.getKnockbackThreshold()) {
-                double knockbackStrength = momentum / 50.0; // 0.5 to 2.0 based on momentum
+                double knockbackStrength = (momentum / 2.0) * Settings.getKnockbackMultiplier(); // 0.5 to 2.0 based on momentum
                 var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
                 damagedEntity.setVelocity(direction.multiply(knockbackStrength));
             }
         } else {
             if (Settings.isKnockbackMobsEnabled() && momentum >= Settings.getKnockbackThreshold()) {
-                double knockbackStrength = momentum / 50.0; // 0.5 to 2.0 based on momentum
+                double knockbackStrength = (momentum / 20.0) * Settings.getKnockbackMultiplier(); // 0.5 to 2.0 based on momentum
                 var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
                 damagedEntity.setVelocity(direction.multiply(knockbackStrength));
             }
-        }
-
-        if (!(damagedEntity instanceof Player) && momentum >= 25) {
-            double knockbackStrength = momentum / 50.0; // 0.5 to 2.0 based on momentum
-            var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
-            damagedEntity.setVelocity(direction.multiply(knockbackStrength));
         }
 
         // Use only sounds based on momentum levels - no heavy particles or entities
@@ -223,7 +214,7 @@ public class HorseCombatListener implements Listener {
                     }
                 } else {
                     // Straight movement, increase momentum
-                    int momentumGain = Settings.getBaseGain(); // default is 1
+                    int momentumGain = Settings.getBaseGain();
                     MomentumUtils.increaseMomentum(player, momentumGain);
                     updateMomentumBar(player);
 

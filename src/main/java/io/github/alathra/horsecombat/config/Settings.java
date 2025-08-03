@@ -99,11 +99,11 @@ public class Settings {
 
     // Combat configs
     public static double getMobDamageMultiplier() {
-        return Cfg.get().getOrDefault("combat.mobDamageMultiplier", 1.5);
+        return Cfg.get().getOrDefault("combat.mobDamageMultiplier", 1.0);
     }
 
     public static double getPlayerDamageMultiplier() {
-        return Cfg.get().getOrDefault("combat.playerDamageMultiplier", 1.5);
+        return Cfg.get().getOrDefault("combat.playerDamageMultiplier", 1.0);
     }
 
     public static int getKnockoffThreshold() {
@@ -111,7 +111,7 @@ public class Settings {
     }
 
     public static double getKnockoffChance() {
-        return Cfg.get().getOrDefault("combat.knockoffChance", 0.33);
+        return Cfg.get().getOrDefault("combat.knockoffChance", 0.20);
     }
 
     public static boolean isKnockbackPlayersEnabled() {
@@ -126,6 +126,9 @@ public class Settings {
         return Cfg.get().getOrDefault("combat.knockbackThreshold", 25);
     }
 
+    public static double getKnockbackMultiplier() {
+        return Cfg.get().getOrDefault("ccombat.knockbackMultiplier", 1.0);
+    }
 
     // Sound Configs
     public static boolean isHitSoundEnabled() {
@@ -160,7 +163,7 @@ public class Settings {
 
     public static Long getStallTimeMillis() {
         double seconds = plugin.getConfigHandler().getConfig().getOrDefault("momentum.stallTimeSeconds", 0.5);
-        return (long) seconds*1000;
+        return (long) (seconds*1000);
     }
 
     public static int getMaxDecayRate() {

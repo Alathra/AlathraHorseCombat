@@ -55,6 +55,8 @@ combat:
   knockbackMobs: true
   # The minimum momentum needed to deliver a knockback effect with a lance strike (hit)
   knockbackThreshold: 25
+  # A multiplier that impacts the velocity of the knockback effect
+  knockbackMultiplier: 1.0
 
 momentum:
   # How much momentum is gained when the horse is not considered to be turning or stalling, per player move event fired
