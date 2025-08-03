@@ -29,6 +29,7 @@ public class ConfigHandler implements Reloadable {
             .addInputStream(plugin.getResource("config.yml"))
             .setReloadSetting(ReloadSetting.MANUALLY)
             .create();
+        Settings.setVanillaLanceMap();
     }
 
     @Override
@@ -41,6 +42,7 @@ public class ConfigHandler implements Reloadable {
 
     public void reloadConfig() {
         cfg.forceReload();
+        Settings.setVanillaLanceMap();
     }
 
     /**

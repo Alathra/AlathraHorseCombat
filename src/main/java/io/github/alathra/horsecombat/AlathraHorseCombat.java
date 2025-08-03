@@ -5,7 +5,6 @@ import io.github.alathra.horsecombat.config.ConfigHandler;
 import io.github.alathra.horsecombat.config.Settings;
 import io.github.alathra.horsecombat.hook.HookManager;
 import io.github.alathra.horsecombat.listener.ListenerHandler;
-import io.github.alathra.horsecombat.threadutil.SchedulerHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +22,6 @@ public class AlathraHorseCombat extends JavaPlugin {
     private HookManager hookManager;
     private CommandHandler commandHandler;
     private ListenerHandler listenerHandler;
-    private SchedulerHandler schedulerHandler;
 
     // Debug flag for more verbose logging
     private boolean debugMode = false;
@@ -48,14 +46,12 @@ public class AlathraHorseCombat extends JavaPlugin {
         hookManager = new HookManager(this);
         commandHandler = new CommandHandler(this);
         listenerHandler = new ListenerHandler(this);
-        schedulerHandler = new SchedulerHandler();
 
         handlers = List.of(
             configHandler,
             hookManager,
             commandHandler,
-            listenerHandler,
-            schedulerHandler
+            listenerHandler
         );
 
         for (Reloadable handler : handlers)

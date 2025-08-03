@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class HorseCombatListener implements Listener {
-    public static String townyBypassPermission = "horsecombat.admin.townybypass";
 
     AlathraHorseCombat plugin = AlathraHorseCombat.getInstance();
     private final HashMap<UUID, HorseState> horseStateMap = new HashMap<>();
@@ -46,7 +45,7 @@ public class HorseCombatListener implements Listener {
         Entity damagedEntity = event.getEntity();
 
         // Skip if the target is not a living entity (we want to hit mobs and players)
-        if (!(damagedEntity instanceof LivingEntity)) return;
+        if (!(damagedEntity instanceof LivingEntity livingEntity)) return;
 
         // Get UUID for tracking damage processing
         UUID damagedUuid = damagedEntity.getUniqueId();
@@ -55,7 +54,7 @@ public class HorseCombatListener implements Listener {
         if (entitiesBeingDamaged.contains(damagedUuid)) return;
 
         // Check for Towny bypass - add this check
-        if (Hook.Towny.isLoaded() && !damagingEntity.hasPermission(townyBypassPermission) && Settings.isTownyConfigEnabled()) {
+        if (Hook.Towny.isLoaded() && Settings.isTownyCompatibilityEnabled()) {
             // Get Towny API
             TownyAPI townyAPI = Hook.getTownyHook().getTownyAPI();
             // Get town of entity being damaged, if exists
@@ -85,9 +84,6 @@ public class HorseCombatListener implements Listener {
 
         // --- ATTEMPT TO APPLY HORSE COMBAT MECHANICS ---
 
-        // Cancel vanilla damage to prevent stacking
-        event.setCancelled(true);
-
         // Add to processing set to prevent recursion
         entitiesBeingDamaged.add(damagedUuid);
 
@@ -106,8 +102,8 @@ public class HorseCombatListener implements Listener {
         // Apply the mob multiplier if target is not a player
         double damage = baseDamage * damageMultiplier;
 
-        // Apply damage directly without causing another event
-        ((LivingEntity) damagedEntity).damage(damage);
+        // Apply damage
+        event.setDamage(damage);
 
         // Only for debug - can be disabled in production
         if (plugin.isDebugEnabled()) {
@@ -128,11 +124,19 @@ public class HorseCombatListener implements Listener {
             }
         }
 
-        // Apply knockback to mobs (not for players, as it can be annoying in PvP)
-        if (!(damagedEntity instanceof Player) && momentum >= 25) {
-            double knockbackStrength = momentum / 50.0; // 0.5 to 2.0 based on momentum
-            var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
-            damagedEntity.setVelocity(direction.multiply(knockbackStrength));
+        // Apply knockback if enabled
+        if (damagedEntity instanceof Player) {
+            if (Settings.isKnockbackPlayersEnabled() && momentum >= Settings.getKnockbackThreshold()) {
+                double knockbackStrength = (momentum / 2.0) * Settings.getKnockbackMultiplier(); // 0.5 to 2.0 based on momentum
+                var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
+                damagedEntity.setVelocity(direction.multiply(knockbackStrength));
+            }
+        } else {
+            if (Settings.isKnockbackMobsEnabled() && momentum >= Settings.getKnockbackThreshold()) {
+                double knockbackStrength = (momentum / 20.0) * Settings.getKnockbackMultiplier(); // 0.5 to 2.0 based on momentum
+                var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
+                damagedEntity.setVelocity(direction.multiply(knockbackStrength));
+            }
         }
 
         // Use only sounds based on momentum levels - no heavy particles or entities
@@ -142,8 +146,14 @@ public class HorseCombatListener implements Listener {
         MomentumUtils.resetMomentum(damagingPlayer);
 
         // Play "clink" sound when player registers a hit
-        if (Settings.isHitSoundEnabled() && momentum >= 25)
-            damagingPlayer.getWorld().playSound(Settings.getHitSound());
+        if (Settings.isHitSoundEnabled() && momentum >= Settings.getHitSoundMinimumMomentum()) {
+            for (Player nearby : damagingPlayer.getWorld().getNearbyPlayers(damagingPlayer.getLocation(), Settings.getHitSoundRange())) {
+                nearby.playSound(Settings.getHitSound());
+            }
+        }
+
+        if (Settings.areParticlesEnabled() && momentum >= Settings.getHitParticlesMinimumMomentum())
+            damagingPlayer.getWorld().spawnParticle(Settings.getParticleType(), damagedEntity.getLocation().add(0.0, 1.0, 0.0), Settings.getParticleAmount(), Settings.getParticleSpread(), Settings.getParticleSpread(), Settings.getParticleSpread());
 
         // Always remove from processing set when done
         entitiesBeingDamaged.remove(damagedUuid);
@@ -164,11 +174,11 @@ public class HorseCombatListener implements Listener {
 
             // Check if the horse has moved
             double distanceSquared = horseState.distanceSquared(currentLocation);
-            double movementThreshold = Settings.getMovementThreshold(); // default is 0.05
+            double movementThreshold = Settings.getStallCancelDistance(); // default is 0.05
 
             if (distanceSquared < movementThreshold * movementThreshold) {
                 // Horse isn't moving (or moving very little)
-                Long stallTime = Settings.getStallTimeMs(); // default is 0.5 seconds or 500ms
+                Long stallTime = Settings.getStallTimeMillis(); // default is 0.5 seconds or 500ms
 
                 if (currentTime - horseState.lastMoveTime > stallTime) {
                     // Horse has been still for the configured time
@@ -191,7 +201,7 @@ public class HorseCombatListener implements Listener {
             } else {
                 // Calculate the difference in yaw (angle change)
                 float yawDifference = horseState.yawDifference(currentYaw);
-                double turnThreshold = Settings.getTurnThreshold(); // default 30.0
+                double turnThreshold = Settings.getTurnMinDegrees(); // default 30.0
 
                 if (yawDifference > turnThreshold) {
                     // Sharp turn detected
@@ -204,7 +214,7 @@ public class HorseCombatListener implements Listener {
                     }
                 } else {
                     // Straight movement, increase momentum
-                    int momentumGain = Settings.getStraightGain(); // default is 1
+                    int momentumGain = Settings.getBaseGain();
                     MomentumUtils.increaseMomentum(player, momentumGain);
                     updateMomentumBar(player);
 
