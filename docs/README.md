@@ -1,12 +1,13 @@
-<h1 style="text-align:center;">AlathraHorseCombat (Gradle)</h1>
-<p style="text-align:center;">
+
+<div style="align: center;">
+<h1>AlathraHorseCombat (Gradle)</h1>
     <img alt="GitHub License" src="https://img.shields.io/github/license/Alathra/Template-Gradle-Plugin?style=for-the-badge&color=blue&labelColor=141417">
     <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/Alathra/Template-Gradle-Plugin/total?style=for-the-badge&labelColor=141417">
     <img alt="GitHub Release" src="https://img.shields.io/github/v/release/Alathra/Template-Gradle-Plugin?include_prereleases&sort=semver&style=for-the-badge&label=LATEST%20VERSION&labelColor=141417">
     <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/Alathra/Template-Gradle-Plugin/ci.yml?style=for-the-badge&labelColor=141417">
     <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/Alathra/Template-Gradle-Plugin?style=for-the-badge&labelColor=141417">
     <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Alathra/Template-Gradle-Plugin?style=for-the-badge&labelColor=141417">
-</p>
+</div>
 
 ---
 
@@ -20,27 +21,78 @@ AlathraHorseCombat is a modernized, highly configurable and Java-implemented for
 
 Lances and Pikes (configured under itemIdList), is used as the primary weapons for AlathraHorseCombat. Once the player rides a horse, the momentum bar can be seen above the player's hotbar. Momentum determines what the final damage output will be.
 
-**Combat Configs**
-- `mobDamageMultiplier` Damage multipler on mobs, on top of momentum damage multiplier. Default is 1.5
-- `knockoffThreshold` Momentum threshold that knocks the targetted player off their horse. Default is 50
-- `footDamage` Damage multiplier if attacker is not on a horse and is using a lance/pike. Default is 0.5
-- `footDamageMobs` Damage multipler if attacker is not on a horse, is using a lance/pike and has damaged a mob entity. Default is 1.0
-- `slownessDuration` Duration of slowness applied on the attacker if not on a horse and is using a lance/pike. Default is 100 seconds
-- `slownessLevel` Level of slowness applied on the attacker if not on a horse and is using a lance/pike. Default is 1
+# Combat Configs
+- `playerDamageMultiplier` Damage multipler on players, on top of momentum damage multiplier.
+    Default is default is set to 1.0
+- `mobDamageMultiplier` Damage multipler on mobs, on top of momentum damage multiplier.
+    Default is set to 1.0
+- `knockoffThreshold` Momentum threshold that knocks the targetted player off their horse. 
+    Default is set to 50
+- `knockoffChance` The chance that a lance hit will knock another player off their horse if the knockoffThreshold is exceeded.
+    Default is set to 0.2
+- `knockbackPlayers` The chance that the spear can deliver a knockback effect on players, proportional to momentum.
+    The default is set to True.
+-  `knockbackMobs` The chance that the spear can deliver a knockback effect on mobs, proportional to momentum.
+    The default is set to True
+-   `knockbackThreshold` The minimum momentum needed to deliver a knockback effect with a lance strike (hit).
+    The default for this is set to 25.
+-   `knockbackMultiplier` A multiplier that impacts the velocity of the knockback effect.
+    The default for this is set to 1.0.
 
-**Momentum Configs**
-- `movementThreshold` Distance in blocks the horse/player has moved within the configured stallTimeMs, used to check if the horse has not moved within a set amount of time in a set amount of distance. Default is 0.05
-- `stallTimeMs` Time in milliseconds the horse has stood still (or moved a little), used in conjunction with movementThreshold, i.e: decrease momentum when horse has not moved 0.05 blocks in 500ms. Default is 0.5s or 500ms
-- `maxDecayRate` Maximum momentum decay rate when horse is standing still. Default is 20 per stallTimeMs units, i.e. max is 20 per 500ms
-- `turnThreshold` The minimum threshold yaw before the plugin determines the horse has turned "sharply", therefore decrease momentum. Default is 30 degrees
-- `turnLoss` Momentum loss per sharp turn. Default is 10
-- `straightGain` Momentum gain when horse is moving straight. Default is 1
+# Momentum Configs
+- `baseGain` How much momentum is gained when the horse is moving in a straight line, per player move event fired. 
+    The default for this is set to 2.
+
+# Stall Mechanics
+    **Once a horse is considered stalling it will experience momentum decay.**
+
+- `stallTimeSeconds` The time in seconds used in conjunction with stallCancelDistance to determine if a horse is stalling. 
+    The default for this is set to .5.
+- `stallCancelDistance` The distance (blocks traveled) that the horse must move within stallTimeSeconds, before it stalls.
+    The default is set to 1.25
+- `maxDecayRate` The maximum rate of decay of momentum as a result of turning or stalling
+ The default for this is set to 20.
+- `turnMinDegrees` The minimum threshold yaw before the plugin determines the horse has turned, therefore decrease momentum.
+    Default is set to 50 degrees.
+- `turnLoss` Momentum loss per sharp turn.
+    Default is 15
+
+# Damage Multipliers
 - `momentum_100` Damage multiplier when momentum is at max. Default is 2.5
 - `momentum_75-99` Damage multiplier when momentum is at 75 to 99. Default is 2
 - `momentum_50-74` Damage multiplier when momentum is at 50 to 74. Default is 1.5
 - `momentum_25-49` Damage multiplier when momentum is at 25 to 49. Default is 1
 - `momentum_0-24` Damage multiplier when momentum is at 0 to 24. Default is 0.5
 
+# Sound Settings
+## *Hit*
+    You can changed the sound effects here 
+#### [Sounds Effects](https://www.digminecraft.com/lists/sound_list_pc.php)
+- `enabled` The option to turn the particles off and on.
+    The default for this is set to true
+- `effect` "minecraft:entity.zombie.attack_iron_door"
+- `volume` Default is set for .5
+- `pitch` How far the sound can be heard. If this is not set it will sound across the world.
+    Default is set to 32.
+- `range` Damage multiplier when momentum is at 0 to 24. 
+    Default is 0.5
+- `minMomentum` Minimum momentum required for the  hit sound to be produced
+    This is default set to 25.
+
+# Particle Settings
+
+## *Hit*
+You can changed the particle effects here 
+#### - [Particle Effects]( https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html)
+- `enabled` The option to turn the particles off and on.
+    The default for this is set to true
+- `type` Crit
+- `amount` The amount of particles that will spawn on hit. 
+    The default is set to 20.
+- `spread` Damage multiplier when momentum is at 0 to 24. 
+    Default is 1.
+- `minMomentum` Minimum momentum required for the  hit sound to be produced
+    This is default set to 25.
 ---
 
 ## Hooks and Compatibility
@@ -48,28 +100,23 @@ Lances and Pikes (configured under itemIdList), is used as the primary weapons f
 - [Towny](https://github.com/TownyAdvanced/Towny)
   If Towny is enabled, it will check whether or not the attacking player is a member of the town the damaging entity is in, check if the said town is in a war, check if the town has PvP enabled, and check if the town has damage mobs enabled.
 
-- [ItemsAdder](https://itemsadder.devs.beer/), [Nexo](https://docs.nexomc.com/), [Oraxen](https://oraxen.com/)
+- [ItemsAdder](https://itemsadder.devs.beer/), [Nexo](https://docs.nexomc.com/), [Oraxen](https://oraxen.com/), [MmoItems](https://www.spigotmc.org/wiki/mmoitems-wiki/)
   The above plugins are used to create and manage custom items. AlathraHorseCombat has a section in the config that can add custom items that can be used in the plugin.
 
-AlathraHorseCombat has no commands.
 
 ---
 
 ## Permissions
 
 AlathraHorseCombat contains the following permission nodes:
-- `horsecombat.admin.townybypass` Grants the user towny bypass for horsecombat, allowing them to damage any player or entity within a towny claim, regardless if the user is a member of the town or not.
+- `alathrahorsecombat.admin` Grants the user towny bypass for horsecombat, allowing them to damage any player or entity within a towny claim, regardless if the user is a member of the town or not.
 
 ---
 
 ## Commands
 
-AlathraHorseCombat has no commands.
-
----
-
-## Configuration
-
-AlathraHorseCombat can be configured by editing values in the config.yml. AlathraHorseCombat does not have a reload command because it automatically checks for updates in the config file. When you make edits to the file the changes will be applied immediately.
+AlathraHorseCombat has two current commands
+- `reload` This command reloads the Horse combat plugin
+- `getlances` This command will give you all of the lances from the AlathraHorseCombat plugin
 
 ---
