@@ -26,7 +26,7 @@ public class AlathraHorseCombatCommand {
     }
 
     private void helpMenu(CommandSender sender, CommandArguments args) {
-        sender.sendMessage(ColorParser.of("<yellow>SimpleLockpicking Commands:").build());
+        sender.sendMessage(ColorParser.of("<yellow>AlathraHorseCombat Commands:").build());
         sender.sendMessage(ColorParser.of("<yellow>/alathrahorsecombat reload <green>reloads config settings").build());
     }
 
