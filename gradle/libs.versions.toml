@@ -31,7 +31,7 @@ mmoitems = "net.Indyuce:MMOItems-API:6.9.5-SNAPSHOT"
 mythiclib = "io.lumine:MythicLib-dist:1.7.1-SNAPSHOT"
 
 [plugins]
-shadow = "com.gradleup.shadow:8.3.8"
+shadow = "com.gradleup.shadow:8.3.9"
 run-paper = "xyz.jpenilla.run-paper:2.3.1"
 plugin-yml = "de.eldoria.plugin-yml.bukkit:0.7.1"
 #paperweight = "io.papermc.paperweight.userdev:1.7.7"
