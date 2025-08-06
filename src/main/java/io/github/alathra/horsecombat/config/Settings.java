@@ -98,6 +98,11 @@ public class Settings {
     }
 
     // Combat configs
+
+    public static boolean isOffhandCombatEnabled() {
+        return Cfg.get().getOrDefault("combat.allowOffhandCombat", true);
+    }
+
     public static double getMobDamageMultiplier() {
         return Cfg.get().getOrDefault("combat.mobDamageMultiplier", 1.0);
     }

@@ -1,5 +1,6 @@
 package io.github.alathra.horsecombat.listener;
 
+import com.google.common.base.Function;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.object.Town;
@@ -10,30 +11,31 @@ import io.github.alathra.horsecombat.hook.Hook;
 import io.github.alathra.horsecombat.utility.coreutil.HorseState;
 import io.github.alathra.horsecombat.utility.coreutil.MomentumUtils;
 import io.github.milkdrinkers.colorparser.ColorParser;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
 public class HorseCombatListener implements Listener {
 
     AlathraHorseCombat plugin = AlathraHorseCombat.getInstance();
     private final HashMap<UUID, HorseState> horseStateMap = new HashMap<>();
-
-    // Set to track entities currently being damaged to prevent infinite loops
-    private final HashSet<UUID> entitiesBeingDamaged = new HashSet<>();
+    private NamespacedKey offhandTag = new NamespacedKey("alathrahorsecombat", "_offhand_lanced_entity");
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
+
         // Skip if the event is already cancelled (e.g., by a claim plugin)
         if (event.isCancelled()) return;
 
@@ -44,14 +46,15 @@ public class HorseCombatListener implements Listener {
 
         Entity damagedEntity = event.getEntity();
 
+        // Check for offhand tag, called event
+        if (Settings.isOffhandCombatEnabled() && damagedEntity.getPersistentDataContainer().has(offhandTag)) {
+            lanceStrike(damagingPlayer, damagedEntity, event.getDamage(), event);
+            damagedEntity.getPersistentDataContainer().remove(offhandTag);
+            return;
+        }
+
         // Skip if the target is not a living entity (we want to hit mobs and players)
-        if (!(damagedEntity instanceof LivingEntity livingEntity)) return;
-
-        // Get UUID for tracking damage processing
-        UUID damagedUuid = damagedEntity.getUniqueId();
-
-        // Check if we're already processing damage for this entity - prevents infinite loops
-        if (entitiesBeingDamaged.contains(damagedUuid)) return;
+        if (!(damagedEntity instanceof LivingEntity)) return;
 
         // Check for Towny bypass - add this check
         if (Hook.Towny.isLoaded() && Settings.isTownyCompatibilityEnabled()) {
@@ -74,25 +77,52 @@ public class HorseCombatListener implements Listener {
             }
         }
 
-        // TODO: add option to enable if can be used on offhand
-        ItemStack mainHandItem = damagingPlayer.getInventory().getItemInMainHand();
-
         // Check to see if the item the player is holding is a lancing item
-        String lanceItemId = Settings.getItemProvider().parseItemID(mainHandItem);
-        if (lanceItemId == null || !Settings.getLanceIDList().contains(lanceItemId)) return;
+        ItemStack mainHandItem = damagingPlayer.getInventory().getItemInMainHand();
+        String lanceItemIDInMainHand = Settings.getItemProvider().parseItemID(mainHandItem);
+        if (lanceItemIDInMainHand == null || !Settings.getLanceIDList().contains(lanceItemIDInMainHand)) {
 
-        // --- ATTEMPT TO APPLY HORSE COMBAT MECHANICS ---
+            if (!Settings.isOffhandCombatEnabled()) return;
 
-        // Add to processing set to prevent recursion
-        entitiesBeingDamaged.add(damagedUuid);
+            // --- PREPARE LANCE STRIKE FOR OFFHAND ---
+            ItemStack offHandItem = damagingPlayer.getInventory().getItemInOffHand();
+            String lanceItemIDInOffHand = Settings.getItemProvider().parseItemID(offHandItem);
+            // If lance is not in offhand, exit
+            if(lanceItemIDInOffHand == null || !Settings.getLanceIDList().contains(lanceItemIDInOffHand)) return;
+
+            // TAG ENTITY
+            damagedEntity.getPersistentDataContainer().set(offhandTag, PersistentDataType.BYTE, (byte) 1);
+
+            // CALL NEW DAMAGE EVENT
+            Map<EntityDamageEvent.DamageModifier, Double> modifiers = new EnumMap<>(EntityDamageEvent.DamageModifier.class);
+            modifiers.put(EntityDamageEvent.DamageModifier.BASE, event.getDamage());
+            Map<EntityDamageEvent.DamageModifier, Function<? super Double, Double>> modifierFunctions = new EnumMap<>(EntityDamageEvent.DamageModifier.class);
+            modifierFunctions.put(EntityDamageEvent.DamageModifier.BASE, d -> d);
+            EntityDamageByEntityEvent offHandEvent = new EntityDamageByEntityEvent (
+                damagingEntity,
+                damagedEntity,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+                event.getDamageSource(),
+                modifiers,
+                modifierFunctions,
+                false
+            );
+            Bukkit.getPluginManager().callEvent(offHandEvent);
+            return;
+        }
+
+        // lance strike for main hand
+        lanceStrike(damagingPlayer, damagedEntity, event.getDamage(), event);
+    }
+
+    private void lanceStrike(Player attacker, Entity lancedEntity, double originalDamage, EntityDamageByEntityEvent event) {
 
         // Attacker is on a horse
-        int momentum = MomentumUtils.getMomentum(damagingPlayer);
-        double originalDamage = event.getDamage();
+        int momentum = MomentumUtils.getMomentum(attacker);
 
         // Get damage multiplier
         double damageMultiplier = Settings.getPlayerDamageMultiplier();
-        if (!(damagedEntity instanceof Player)) {
+        if (!(lancedEntity instanceof Player)) {
             damageMultiplier = Settings.getMobDamageMultiplier();
         }
 
@@ -106,56 +136,53 @@ public class HorseCombatListener implements Listener {
 
         // Only for debug - can be disabled in production
         if (plugin.isDebugEnabled()) {
-            plugin.getLogger().info("Entity hit with momentum: " + momentum + ", damage: " + damage + ", entity type: " + damagedEntity.getType());
+            plugin.getLogger().info("Entity hit with momentum: " + momentum + ", damage: " + damage + ", entity type: " + lancedEntity.getType());
         }
 
         // Handle knockoff for riders based on momentum thresholds
         int knockoffThreshold = Settings.getKnockoffThreshold(); // default is 50
 
-        if (momentum >= knockoffThreshold && damagedEntity.getVehicle() != null) {
+        if (momentum >= knockoffThreshold && lancedEntity.getVehicle() != null) {
             if (Settings.getKnockoffChance() > Math.random()) {
                 // Add delay before ejecting to avoid damage cancellation
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                    if (damagedEntity.isValid() && damagedEntity.getVehicle() != null) {
-                        damagedEntity.getVehicle().eject();
+                    if (lancedEntity.isValid() && lancedEntity.getVehicle() != null) {
+                        lancedEntity.getVehicle().eject();
                     }
                 }, 2L); // 2 tick delay (0.1 seconds)
             }
         }
 
         // Apply knockback if enabled
-        if (damagedEntity instanceof Player) {
+        if (lancedEntity instanceof Player) {
             if (Settings.isKnockbackPlayersEnabled() && momentum >= Settings.getKnockbackThreshold()) {
                 double knockbackStrength = (momentum / 25.0) * Settings.getKnockbackMultiplier(); // 0.5 to 2.0 based on momentum
-                var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
-                damagedEntity.setVelocity(direction.multiply(knockbackStrength));
+                var direction = lancedEntity.getLocation().toVector().subtract(attacker.getLocation().toVector()).normalize();
+                lancedEntity.setVelocity(direction.multiply(knockbackStrength));
             }
         } else {
             if (Settings.isKnockbackMobsEnabled() && momentum >= Settings.getKnockbackThreshold()) {
                 double knockbackStrength = (momentum / 25.0) * Settings.getKnockbackMultiplier(); // 0.5 to 2.0 based on momentum
-                var direction = damagedEntity.getLocation().toVector().subtract(damagingPlayer.getLocation().toVector()).normalize();
-                damagedEntity.setVelocity(direction.multiply(knockbackStrength));
+                var direction = lancedEntity.getLocation().toVector().subtract(attacker.getLocation().toVector()).normalize();
+                lancedEntity.setVelocity(direction.multiply(knockbackStrength));
             }
         }
 
         // Use only sounds based on momentum levels - no heavy particles or entities
-        playMomentumSounds(damagingPlayer, momentum);
+        playMomentumSounds(attacker, momentum);
 
         // Reset momentum after attack
-        MomentumUtils.resetMomentum(damagingPlayer);
+        MomentumUtils.resetMomentum(attacker);
 
         // Play "clink" sound when player registers a hit
         if (Settings.isHitSoundEnabled() && momentum >= Settings.getHitSoundMinimumMomentum()) {
-            for (Player nearby : damagingPlayer.getWorld().getNearbyPlayers(damagingPlayer.getLocation(), Settings.getHitSoundRange())) {
+            for (Player nearby : attacker.getWorld().getNearbyPlayers(attacker.getLocation(), Settings.getHitSoundRange())) {
                 nearby.playSound(Settings.getHitSound());
             }
         }
 
         if (Settings.areParticlesEnabled() && momentum >= Settings.getHitParticlesMinimumMomentum())
-            damagingPlayer.getWorld().spawnParticle(Settings.getParticleType(), damagedEntity.getLocation().add(0.0, 1.0, 0.0), Settings.getParticleAmount(), Settings.getParticleSpread(), Settings.getParticleSpread(), Settings.getParticleSpread());
-
-        // Always remove from processing set when done
-        entitiesBeingDamaged.remove(damagedUuid);
+            attacker.getWorld().spawnParticle(Settings.getParticleType(), attacker.getLocation().add(0.0, 1.0, 0.0), Settings.getParticleAmount(), Settings.getParticleSpread(), Settings.getParticleSpread(), Settings.getParticleSpread());
     }
 
     @EventHandler

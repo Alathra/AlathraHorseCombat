@@ -38,6 +38,8 @@ lances:
 
 # ----- COMBAT SETTINGS -----
 combat:
+  # If lance items held in the offhand will also produce a lance strike (the main hand is checked first)
+  allowOffhandCombat: true
   # A global damage multiplier when a lance strike (hit) is delivered to a player
   # !! This will multiply the damage from the momentum damage multiplier !!
   playerDamageMultiplier: 1.0
