@@ -13,7 +13,6 @@ import io.github.alathra.horsecombat.utility.coreutil.MomentumUtils;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -23,7 +22,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
@@ -31,7 +29,8 @@ public class HorseCombatListener implements Listener {
 
     AlathraHorseCombat plugin = AlathraHorseCombat.getInstance();
     private final HashMap<UUID, HorseState> horseStateMap = new HashMap<>();
-    private NamespacedKey offhandTag = new NamespacedKey("alathrahorsecombat", "_offhand_lanced_entity");
+    // Player UUID, Entity ID
+    private static final Map<UUID, Integer> offhandTaggedEntities = new HashMap<>();
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
@@ -47,9 +46,9 @@ public class HorseCombatListener implements Listener {
         Entity damagedEntity = event.getEntity();
 
         // Check for offhand tag, called event
-        if (Settings.isOffhandCombatEnabled() && damagedEntity.getPersistentDataContainer().has(offhandTag)) {
+        if (offhandTaggedEntities.containsValue(damagedEntity.getEntityId())) {
             lanceStrike(damagingPlayer, damagedEntity, event.getDamage(), event);
-            damagedEntity.getPersistentDataContainer().remove(offhandTag);
+            plugin.getServer().getScheduler().runTaskLater(plugin, ()-> offhandTaggedEntities.remove(damagingPlayer.getUniqueId()), 1L);
             return;
         }
 
@@ -91,7 +90,7 @@ public class HorseCombatListener implements Listener {
             if(lanceItemIDInOffHand == null || !Settings.getLanceIDList().contains(lanceItemIDInOffHand)) return;
 
             // TAG ENTITY
-            damagedEntity.getPersistentDataContainer().set(offhandTag, PersistentDataType.BYTE, (byte) 1);
+            offhandTaggedEntities.put(damagingPlayer.getUniqueId(), damagedEntity.getEntityId());
 
             // CALL NEW DAMAGE EVENT
             Map<EntityDamageEvent.DamageModifier, Double> modifiers = new EnumMap<>(EntityDamageEvent.DamageModifier.class);
@@ -286,5 +285,9 @@ public class HorseCombatListener implements Listener {
         if (momentum >= 25) return damage * Settings.getDamageMultiplierFrom25To49Momentum();
 
         return damage * Settings.getDamageMultiplierFrom0To24Momentum();
+    }
+
+    public static Map<UUID, Integer> getOffhandTaggedEntities() {
+        return offhandTaggedEntities;
     }
 }

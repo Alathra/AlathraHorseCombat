@@ -1,12 +1,8 @@
 package io.github.alathra.horsecombat.hook;
 
-import io.github.alathra.horsecombat.hook.itemsadder.ItemsAdderHook;
-import io.github.alathra.horsecombat.hook.mmoitems.MMOItemsHook;
-import io.github.alathra.horsecombat.hook.nexo.NexoHook;
-import io.github.alathra.horsecombat.hook.oraxen.OraxenHook;
+import io.github.alathra.horsecombat.hook.packetevents.PacketEventsHook;
 import io.github.alathra.horsecombat.hook.placeholderapi.PAPIHook;
 import io.github.alathra.horsecombat.hook.towny.TownyHook;
-import io.github.alathra.horsecombat.hook.vault.VaultHook;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,12 +12,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public enum Hook {
     PAPI(PAPIHook.class, "PlaceholderAPI", true),
-    Vault(VaultHook.class, "Vault", true),
     Towny(TownyHook.class, "Towny", true),
-    Nexo(NexoHook.class, "Nexo", true),
-    Oraxen(OraxenHook.class, "Oraxen", true),
-    ItemsAdder(ItemsAdderHook.class, "ItemsAdder", true),
-    MMOItems(MMOItemsHook.class, "MMOItems", true);
+    PacketEvents(PacketEventsHook.class, "packetevents", true);
 
     private final @NotNull Class<? extends AbstractHook> hookClass; // The hook class used by this hook
     private final @Nullable String pluginName; // The plugin name used by this hook or null if not applicable
@@ -126,15 +118,6 @@ public enum Hook {
         return (PAPIHook) Hook.PAPI.get();
     }
 
-    /**
-     * Gets vault hook.
-     *
-     * @return the vault hook
-     */
-    @NotNull
-    public static VaultHook getVaultHook() {
-        return (VaultHook) Hook.Vault.get();
-    }
 
     /**
      * Gets Towny hook.
@@ -144,5 +127,15 @@ public enum Hook {
     @NotNull
     public static TownyHook getTownyHook() {
         return (TownyHook) Hook.Towny.get();
+    }
+
+    /**
+     * Gets PacketEvents hook.
+     *
+     * @return the TownyHook hook
+     */
+    @NotNull
+    public static PacketEventsHook getPacketEventsHook() {
+        return (PacketEventsHook) Hook.PacketEvents.get();
     }
 }

@@ -29,6 +29,7 @@ public class ConfigHandler implements Reloadable {
             .addInputStream(plugin.getResource("config.yml"))
             .setReloadSetting(ReloadSetting.MANUALLY)
             .create();
+        Settings.init(plugin);
         Settings.setVanillaLanceMap();
     }
 

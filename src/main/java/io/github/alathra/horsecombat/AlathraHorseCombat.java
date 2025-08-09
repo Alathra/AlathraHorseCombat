@@ -1,10 +1,13 @@
 package io.github.alathra.horsecombat;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import io.github.alathra.horsecombat.command.CommandHandler;
 import io.github.alathra.horsecombat.config.ConfigHandler;
-import io.github.alathra.horsecombat.config.Settings;
 import io.github.alathra.horsecombat.hook.HookManager;
+import io.github.alathra.horsecombat.listener.HorseCombatListener;
 import io.github.alathra.horsecombat.listener.ListenerHandler;
+import io.github.alathra.horsecombat.packets.CombatPacketListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,9 +59,6 @@ public class AlathraHorseCombat extends JavaPlugin {
 
         for (Reloadable handler : handlers)
             handler.onLoad(instance);
-
-        // initialize Settings
-        Settings.init(this);
     }
 
     @Override

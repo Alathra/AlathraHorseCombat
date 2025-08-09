@@ -26,11 +26,6 @@ repositories {
     maven("https://maven.athyrium.eu/releases")
 
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
-    maven("https://jitpack.io/") {
-        content {
-            includeGroup("com.github.MilkBowl") // VaultAPI
-        }
-    }
 
     maven("https://repo.glaremasters.me/repository/towny/") {
         content {
@@ -41,6 +36,7 @@ repositories {
     maven("https://repo.oraxen.com/releases") // Oraxen
     maven("https://maven.devs.beer") // ItemsAdder API Dependency
     maven("https://nexus.phoenixdevt.fr/repository/maven-public") // Phoenix Development (MMOItems)
+    maven("https://repo.codemc.io/repository/maven-public/") // PacketEvents
 }
 
 dependencies {
@@ -68,7 +64,6 @@ dependencies {
     }
 
     // Plugin dependencies
-    compileOnly(libs.vault)
     compileOnly(libs.placeholderapi) {
         exclude("me.clip.placeholderapi.libs", "kyori")
     }
@@ -80,6 +75,7 @@ dependencies {
     compileOnly(libs.itemsadder)
     compileOnly(libs.mmoitems)
     compileOnly(libs.mythiclib)
+    compileOnly(libs.packetevents)
 }
 
 tasks {
@@ -156,10 +152,6 @@ tasks {
 //            github("jpenilla", "MiniMOTD", "v2.0.13", "minimotd-bukkit-2.0.13.jar")
 //            hangar("squaremap", "1.2.0")
 //            url("https://download.luckperms.net/1515/bukkit/loader/LuckPerms-Bukkit-5.4.102.jar")
-            github("MilkBowl", "Vault", "1.7.3", "Vault.jar")
-            hangar("PlaceholderAPI", "2.11.6")
-            hangar("ViaVersion", "5.2.1")
-            hangar("ViaBackwards", "5.2.1")
         }
     }
 }
@@ -180,8 +172,7 @@ bukkit { // Options: https://github.com/Minecrell/plugin-yml#bukkit
 
     // Misc properties
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD // STARTUP or POSTWORLD
-    depend = listOf()
-    softDepend = listOf("Vault", "PlaceholderAPI", "Nexo", "Oraxen", "ItemsAdder", "MMOItems")
-    loadBefore = listOf()
+    depend = listOf("packetevents")
+    softDepend = listOf("PlaceholderAPI", "Nexo", "Oraxen", "ItemsAdder", "MMOItems")
     provides = listOf()
 }
