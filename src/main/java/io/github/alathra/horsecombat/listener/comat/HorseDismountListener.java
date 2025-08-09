@@ -1,6 +1,5 @@
-package io.github.alathra.horsecombat.listener;
+package io.github.alathra.horsecombat.listener.comat;
 
-import io.github.alathra.horsecombat.AlathraHorseCombat;
 import io.github.alathra.horsecombat.utility.coreutil.MomentumUtils;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
@@ -9,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDismountEvent;
 
 public class HorseDismountListener implements Listener {
-    AlathraHorseCombat plugin = AlathraHorseCombat.getInstance();
 
     // Triggered when a player dismounts
     @EventHandler
@@ -18,11 +16,6 @@ public class HorseDismountListener implements Listener {
         if (event.getDismounted() instanceof Horse && event.getEntity() instanceof Player player) {
             // Reset momentum
             MomentumUtils.resetMomentum(player);
-
-            // Debug message if enabled
-            if (plugin.isDebugEnabled()) {
-                plugin.getLogger().info("[HorseCombat] Reset XP for ${player.name} after dismount");
-            }
         }
     }
 }

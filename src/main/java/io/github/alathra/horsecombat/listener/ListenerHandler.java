@@ -2,6 +2,9 @@ package io.github.alathra.horsecombat.listener;
 
 import io.github.alathra.horsecombat.AlathraHorseCombat;
 import io.github.alathra.horsecombat.Reloadable;
+import io.github.alathra.horsecombat.listener.comat.HorseDismountListener;
+import io.github.alathra.horsecombat.listener.comat.LanceStrikeListener;
+import io.github.alathra.horsecombat.listener.comat.MomentumListener;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
@@ -30,7 +33,8 @@ public class ListenerHandler implements Reloadable {
     @Override
     public void onEnable(AlathraHorseCombat plugin) {
         listeners.clear(); // Clear the list to avoid duplicate listeners when reloading the plugin
-        listeners.add(new HorseCombatListener());
+        listeners.add(new LanceStrikeListener(plugin));
+        listeners.add(new MomentumListener(plugin));
         listeners.add(new HorseDismountListener());
 
         // Register listeners here
