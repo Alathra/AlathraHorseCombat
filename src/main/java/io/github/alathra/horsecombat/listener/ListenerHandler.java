@@ -2,9 +2,9 @@ package io.github.alathra.horsecombat.listener;
 
 import io.github.alathra.horsecombat.AlathraHorseCombat;
 import io.github.alathra.horsecombat.Reloadable;
-import io.github.alathra.horsecombat.listener.comat.HorseDismountListener;
-import io.github.alathra.horsecombat.listener.comat.LanceStrikeListener;
-import io.github.alathra.horsecombat.listener.comat.MomentumListener;
+import io.github.alathra.horsecombat.listener.combat.HorseDismountListener;
+import io.github.alathra.horsecombat.listener.combat.LanceStrikeListener;
+import io.github.alathra.horsecombat.listener.combat.MomentumListener;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;

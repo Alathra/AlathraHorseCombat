@@ -1,4 +1,4 @@
-package io.github.alathra.horsecombat.listener.comat;
+package io.github.alathra.horsecombat.listener.combat;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownySettings;
@@ -23,7 +23,7 @@ public class LanceStrikeListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
 
         // Skip if the event is already cancelled (e.g., by a claim plugin)

@@ -1,4 +1,4 @@
-package io.github.alathra.horsecombat.listener.comat;
+package io.github.alathra.horsecombat.listener.combat;
 
 import io.github.alathra.horsecombat.AlathraHorseCombat;
 import io.github.alathra.horsecombat.config.Settings;
