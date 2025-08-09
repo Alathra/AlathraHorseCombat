@@ -22,7 +22,6 @@ AlathraHorseCombat is a modernized, highly configurable and Java-implemented for
 Lances and Pikes (configured under itemIdList), is used as the primary weapons for AlathraHorseCombat. Once the player rides a horse, the momentum bar can be seen above the player's hotbar. Momentum determines what the final damage output will be.
 
 # Combat Configs
-- `allowOffhandCombat` This setting enables or disables the use of lance attacks while they are equipted in the offhand. This default is set to True.
 - `playerDamageMultiplier` Damage multipler on players, on top of momentum damage multiplier.
     Default is default is set to 1.0
 - `mobDamageMultiplier` Damage multipler on mobs, on top of momentum damage multiplier.
