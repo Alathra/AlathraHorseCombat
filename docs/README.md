@@ -22,7 +22,6 @@ AlathraHorseCombat is a modernized, highly configurable and Java-implemented for
 Lances and Pikes (configured under itemIdList), is used as the primary weapons for AlathraHorseCombat. Once the player rides a horse, the momentum bar can be seen above the player's hotbar. Momentum determines what the final damage output will be.
 
 # Combat Configs
-- `allowOffhandCombat` This setting enables or disables the use of lance attacks while they are equipted in the offhand. This default is set to True.
 - `playerDamageMultiplier` Damage multipler on players, on top of momentum damage multiplier.
     Default is default is set to 1.0
 - `mobDamageMultiplier` Damage multipler on mobs, on top of momentum damage multiplier.
@@ -102,7 +101,7 @@ You can changed the particle effects here
   If Towny is enabled, it will check whether or not the attacking player is a member of the town the damaging entity is in, check if the said town is in a war, check if the town has PvP enabled, and check if the town has damage mobs enabled.
 
 - [ItemsAdder](https://itemsadder.devs.beer/), [Nexo](https://docs.nexomc.com/), [Oraxen](https://oraxen.com/), [MmoItems](https://www.spigotmc.org/wiki/mmoitems-wiki/)
-  The above plugins are used to create and manage custom items. AlathraHorseCombat has a section in the config that can add custom items that can be used in the plugin.
+  The above plugins are used to create and manage custom items. AlathraHorseCombat has a section in the config that can add custom lance items that can be used in the plugin.
 
 
 ---
