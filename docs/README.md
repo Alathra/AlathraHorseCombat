@@ -39,13 +39,15 @@ Lances and Pikes (configured under itemIdList), is used as the primary weapons f
 -   `knockbackMultiplier` A multiplier that impacts the velocity of the knockback effect.
     The default for this is set to 1.0.
 
+    ![LanceStrike](https://github.com/Alathra/AlathraHorseCombat/blob/main/docs/assets/LanceStrike.gif "Lance Strike")
+
 # Momentum Configs
 - `baseGain` How much momentum is gained when the horse is moving in a straight line, per player move event fired. 
     The default for this is set to 2.
 
 # Stall Mechanics
     **Once a horse is considered stalling it will experience momentum decay.**
-
+![MomentumMechanic](https://github.com/Alathra/AlathraHorseCombat/blob/main/docs/assets/MomentumMechanic.gif "Momentum Mechanic")
 - `stallTimeSeconds` The time in seconds used in conjunction with stallCancelDistance to determine if a horse is stalling. 
     The default for this is set to .5.
 - `stallCancelDistance` The distance (blocks traveled) that the horse must move within stallTimeSeconds, before it stalls.
@@ -56,7 +58,7 @@ Lances and Pikes (configured under itemIdList), is used as the primary weapons f
     Default is set to 50 degrees.
 - `turnLoss` Momentum loss per sharp turn.
     Default is 15
-
+![TurnLoss](https://github.com/Alathra/AlathraHorseCombat/blob/main/docs/assets/TurnMomentumMechanic.gif "Turn Mechanic")
 # Damage Multipliers
 - `momentum_100` Damage multiplier when momentum is at max. Default is 2.5
 - `momentum_75-99` Damage multiplier when momentum is at 75 to 99. Default is 2
@@ -118,5 +120,5 @@ AlathraHorseCombat contains the following permission nodes:
 AlathraHorseCombat has two current commands
 - `reload` This command reloads the Horse combat plugin
 - `getlances` This command will give you all of the lances from the AlathraHorseCombat plugin
-
+![GetLanceCommand](https://github.com/Alathra/AlathraHorseCombat/blob/main/docs/assets/GetLancesCommand.gif "Get Lances Command")
 ---
