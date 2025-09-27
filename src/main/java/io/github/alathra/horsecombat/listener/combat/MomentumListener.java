@@ -6,8 +6,7 @@ import io.github.alathra.horsecombat.utility.coreutil.HorseState;
 import io.github.alathra.horsecombat.utility.coreutil.MomentumUtils;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import org.bukkit.Location;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -28,16 +27,20 @@ public class MomentumListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
 
-        if (player.getVehicle() instanceof Horse horse) {
-            UUID horseUuid = horse.getUniqueId();
+        if (player.getVehicle() instanceof AbstractHorse abstractHorse ) {
+            if(abstractHorse.getType() != EntityType.HORSE && abstractHorse.getType() != EntityType.SKELETON_HORSE && abstractHorse.getType() != EntityType.ZOMBIE_HORSE)
+                return;
+
+            UUID abstractHorseUuid = abstractHorse.getUniqueId();
+
             long currentTime = System.currentTimeMillis();
-            Location currentLocation = horse.getLocation();
+            Location currentLocation = abstractHorse.getLocation();
             float currentYaw = currentLocation.getYaw();
 
             // Get HorseState
-            HorseState horseState = horseStateMap.computeIfAbsent(horseUuid, id -> new HorseState(currentLocation, 0L));
+            HorseState horseState = horseStateMap.computeIfAbsent(abstractHorseUuid, id -> new HorseState(currentLocation, 0L));
 
-            // Check if the horse has moved
+            // Check if the abstractHorse has moved
             double distanceSquared = horseState.distanceSquared(currentLocation);
             double movementThreshold = Settings.getStallCancelDistance(); // default is 0.05
 
